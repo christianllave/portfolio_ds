@@ -2,7 +2,7 @@
 This portfolio contains my projects and exercises relevant to data science and analytics. 
 
 ## Projects
-### Project 1: Youtube Data API
+### [Project 1: Youtube Data API](https://github.com/christianllave/portfolio_ds/tree/03a4551b93d1a05b1435791522994efec6753184/Project%201)
 Used Python to extract Search data from Youtube on a specific topic, store them on SQLITE, and visualize trends from a combination of metrics.
 
 ### Project 2: Exploring mental health incidents in New Zealand Police Data
