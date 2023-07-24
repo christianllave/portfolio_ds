@@ -1,0 +1,337 @@
+---
+title: "Exploring mental health incidents in New Zealand Police Data"
+author: "Christian Llave (85662382)"
+date: "2023-05-19"
+output: html_document
+---
+
+```{r include = FALSE}
+#setwd('C:Users/CL/Desktop/DATA401/Assignment 1')
+library(tidyverse)
+library(ggplot2)
+library(lubridate)
+library(summarytools)
+library(scales)
+library(gridExtra)
+library(knitr)
+```
+
+## I. Introduction
+<!--Purpose of the study-->
+In 2021, RNZ reported that the Police commissioner Andrew Coster expressed wanting a new approach to addressing the call-outs related to mental health issues. Based on their annual police report at the time, about half of all mental health-related call-outs were left unattended by the police. They also admit that the police are not the best responders to those kinds of call-outs. Despite this, they expect the volume of calls to increase in the near future, even up to 44% by 2025. (Scotcher, 2021)
+
+While police call-outs alone provide an incomplete picture of the situation of mental health in the country, it may lead to insights on the overt expression of distress, and potential underlying social factors that could be mitigated to reduce the occurrence of these call-outs. To explore potential solutions to this, it would be important to understand the situation through the following questions:
+
+1. Has there been an increase in the proportion of mental health-related activities since 2021?
+2. Is there a way to see overt expressions of mental health distress manifested in police records? If so, what are the top categories?
+3. Is there a difference in how mental health incidents occur between city and non-city areas?
+
+To understand reports in the context of mental health. We will first explore the trend of mental health reports over time split by whether or not it was correctly reported as a mental health issue. Explore correlation between crime types and occurrence of mental health reports.
+
+## II. Methods
+<!--Discuss the dataset-->
+From the Demand and Activity reports, we have access to records with key variables such as location, day of week, time of day, reported occurrence, and recorded occurrence. (New Zealand Police, 2023) However, the report contains limited demographic data, which limits the insights that can be derived from this paper. Another limitation of the report is the lack of context as to what 'Mental Health' means as an occurrence subgroup; however, for the purpose of this report, it is interpreted as overt expressions of mental health distress or occurrences that could be traced back to it.  There is also the lack of what action the police has taken to resolve the incident.
+
+The primary dataset includes incidents involving the occurrence subgroup 'Mental Health'. This means the data sets to download are from both Reported and Recorded occurrence sets. Much of the data is categorical, with the number of occurrences being the only numerical variable. This means much of the representations in this report will be represented by proportions and frequencies per category, as we drill down on dimensions relevant to the questions.
+
+```{r include = FALSE}
+mh_recorded <- read.csv('MH_052020-042023_recorded.csv')
+mh_reported <- read.csv('MH_052020-042023_reported.csv')
+```
+
+Because there are occurrences recorded as 'Mental Health' that was reported as something else and vice versa, we create a dataframe for each category. ```misreported``` is created for reports misreported as 'Mental Health' and later on recorded as a different category. ```redirected``` is for reports under other subgroups that are redirected as 'Mental Health'. Meanwhile, ```true_mh``` is for reports reported as 'Mental Health' and also recorded as 'Mental Health'. These are then combined into a master dataframe ```mh_incidents``` which will be used to subset in succeeding analyses.
+
+```{r include = FALSE}
+misreported <- subset(mh_reported,
+                      mh_reported$Recorded.Occ.Type.Subgroup != mh_reported$Reported.Occ.Type.Subgroup)
+misreported$classification <- 'misreported'
+
+redirected <- subset(mh_recorded,
+                     mh_recorded$Recorded.Occ.Type.Subgroup != mh_recorded$Reported.Occ.Type.Subgroup)
+redirected$classification <- 'redirected'
+
+true_mh <- subset(mh_reported,
+                           mh_reported$Reported.Occ.Type.Subgroup == mh_reported$Recorded.Occ.Type.Subgroup)
+true_mh$classification <- 'true_mh'
+
+mh_incidents <- rbind(misreported,redirected,true_mh)
+```
+Within the ```mh_incidents``` dataframe, year and month data is reformatted to the standard r date format for uniformity. This allows us to join statistics of different groups on a common month-year value. An additional column ```iscity``` is created to indicate a city or non-city call-out based on the Police Area column. The column value is derived from finding the word "City" or "Auckland" in the Police Area column. The use of Auckland came after an initial trial wherein the Police District contained City districts (Auckland City, Manukau, and Waitemata).
+
+```{r include = FALSE}
+mh_incidents$Year.Month <- as.character(my(mh_incidents$Year.Month))
+mh_incidents$iscity <- if_else(str_detect(mh_incidents$Police.Area.TA,"City") |
+                                 str_detect(mh_incidents$Police.Area.TA,"Auckland"),"City","Other")
+```
+
+To examine the increase of mental health reports over time, we will examine the situation for each month. We will use proportions of mental health incidents by getting the total mental health incidents for that month out of all police reports for that period. That monthly proportion is then plotted against the total reports per month. This presents the changes in proportion over time more clearly than a stacked bar chart, as the share of mental health incidents will be too small to see. 
+
+The source provides a csv of the count of all incident types aggregated per month. Downloading this file as opposed to the entire dataset allows for more lean operations. To match this dataset on the side of 'Mental Health' incidents, we create a table from the month of year column and store it as a dataframe. These two are then joined by date, and a new variable ```rate_mentalhealth``` is calculated as the proportion.
+
+```{r include = FALSE}
+total_monthly <- read.csv('Total_052020-042023_reported_monthly_v2.csv')
+colnames(total_monthly) <- c('date','count')
+total_monthly$date <- as.character(my(total_monthly$date))
+total_monthly$count <- as.numeric(gsub(",","",total_monthly$count))
+
+mh_incidents_bydate <- as.data.frame(table(mh_incidents$Year.Month))
+colnames(mh_incidents_bydate) <- c('date','count')
+
+merged_monthly <- merge.data.frame(x = total_monthly, y = mh_incidents_bydate, by = 'date',  all.x = TRUE)
+merged_monthly$date <- as.Date(merged_monthly$date)
+merged_monthly$count.x <- as.numeric(gsub(",","",merged_monthly$count.x))
+merged_monthly$count.y <- as.numeric(gsub(",","",merged_monthly$count.y))
+merged_monthly$rate_mentalhealth <- merged_monthly$count.y/merged_monthly$count.x
+merged_monthly$year <- year(merged_monthly$date)
+colnames(merged_monthly) <- c('date','total', 'mentalhealth', 'rate_mentalhealth', 'year')
+```
+
+## III. Results and Discussion
+### III. i. Has there been an increase in the proportion of mental health-related activities since 2021?
+Based on Figure 1, the monthly proportion of mental health incidents relative to all reports is at most 1.54%. From May 2020 to March 2023, there is an increased level of proportions, especially after 2021. We can combine these monthly proportions into yearly proportions to observe the year-on-year changes.
+
+```{r fig.height = 2, fig.width = 10, fig.align = 'center', fig.cap="Fig. 1: Combination plot of monthly proportion of Mental Health reports vs total monthly reports", echo = FALSE }
+options(scipen=999)
+scale = 0.015/300
+merged_monthly %>%
+  ggplot(aes(x=date)) +
+  geom_col(aes(y = total/1000), fill = 'lightgray', color = 'gray') +
+  geom_line(aes(y = rate_mentalhealth/scale),
+            color = 'blue',
+            linewidth = 1,
+            show.legend = TRUE) +
+  theme(panel.grid.major.y = element_line(color = 'gray'),
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.background = element_blank(),
+        plot.title = element_text(hjust = 0.5))+
+  scale_x_date(date_breaks = '3 months', date_labels = '%b-%y')+
+  scale_y_continuous(
+    n.breaks = 6,
+    sec.axis=sec_axis(~.*0.015/300,
+                      labels = scales::percent,
+                      name="% Mental Health Reports"))+
+  labs(x = 'Date',
+       y='All Police Reports (in 000s)',
+       title = 'Proportion of mental health reports per month')
+```
+
+
+
+The box plot in Figure 2 also displays this trend. Both 2020 and 2021 are both right skewed, which has a higher concentration of low-valued proportions for that year. Meanwhile, 2022 to 2023 are left skewed and close to the center respectively.
+
+```{r fig.height = 3, fig.width = 10, fig.align = 'center', fig.cap="Fig. 2: Box plot of monthly proportions of mental health reports grouped by year", echo = FALSE}
+merged_monthly %>%
+  ggplot(aes(y = year, x = mentalhealth/total, group = as.factor(year)))+
+  geom_boxplot()+
+  theme(panel.grid.major.x = element_line(color = 'gray'),
+      panel.background = element_blank(),
+      plot.title = element_text(hjust = 0.5))+
+  scale_y_continuous(name = 'Year', breaks = seq(2020,2023,1))+
+  scale_x_continuous(name = 'Monthly % of Mental Health reports', labels = percent)+
+  labs(title = 'Monthly % of Mental Health reports per Year')+
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+
+
+There is an increase in the proportion of mental health incidents in police records as evident in the proportion over time, and the changes in skew over time. This may substantiate the initial expectation of the police commissioner that incidents will continue to rise. 
+
+### III. ii. Is there a way to see overt expressions of mental health distress manifested in police records? If so, what are the top categories?
+Based on Table 1, over 56% of the mental health occurrences are reported correctly. Over 37% are reported as a different occurrence subgroup and later on recorded as 'Mental Health'.  
+```{r fig.width = 10, message = FALSE, echo = FALSE}
+agg_classifications <- mh_incidents %>%
+  group_by(classification) %>%
+  summarise(added = sum(Events.Occurrences))
+agg_classifications$rel_freq <- agg_classifications$added / sum(agg_classifications$added)
+agg_classifications <- agg_classifications[order(agg_classifications$rel_freq, decreasing = TRUE),]
+colnames(agg_classifications) <- c('Classification', 'Occurrences', 'Relative Frequency')
+knitr::kable(agg_classifications,
+             format = 'simple',
+             caption = '<center>Table 1: Classification of mental health incidents</center>',
+             align = 'lcr')
+```
+
+According to Table 2, over 40% come from the combined frequencies of social service activities and social service demand, while 18% are from crime and crash. 
+```{r echo = FALSE}
+redirect_sources <- redirected %>%
+  group_by(Reported.Occ.Type.Division) %>%
+  summarise(added = sum(Events.Occurrences))
+
+redirect_sources$rel_freq <- redirect_sources$added / sum(redirect_sources$added)
+redirect_sources <- redirect_sources[order(redirect_sources$rel_freq, decreasing = TRUE),]
+colnames(redirect_sources) <- c('Reported Subgroup', 'Occurrences', 'Relative Frequency')
+
+knitr::kable(head(redirect_sources, n = 5),
+             format = 'simple',
+             caption = '<center>Table 2: Top 5 Report subgroups from Redirected records</center>',
+             align = 'lcr')
+```
+```{r echo = FALSE}
+social_service <- rbind(subset(redirected,redirected$Reported.Occ.Type.Division == 'Social/Service Activities'),
+                        subset(redirected,redirected$Reported.Occ.Type.Division == 'Social/Service Demand'))
+  
+agg_social_service <- social_service %>%
+  group_by(Reported.Occ.Type.Subgroup) %>%
+  summarise(added = sum(Events.Occurrences))
+
+agg_social_service$rel_freq <- agg_social_service$added / sum(agg_social_service$added)
+agg_social_service <- agg_social_service[order(agg_social_service$rel_freq, decreasing = TRUE),]
+colnames(agg_social_service) <- c('ReportedSubgroup', 'Occurrences', 'RelativeFrequency')
+```
+
+```{r echo = FALSE}
+plot_social_service <- ggplot(data = head(agg_social_service,n = 5),
+       aes(y = reorder(ReportedSubgroup,+Occurrences), x = Occurrences)) +
+  geom_bar(stat="identity", fill = 'maroon', alpha = 0.7)+
+  labs(title = 'Top
+       Social Service Demand',
+       y = 'Report Subgroup')+
+  theme(panel.grid = element_blank(),
+      panel.background = element_blank(),
+      plot.title = element_text(hjust = 0.5))+
+  geom_text(aes(label = Occurrences), color = 'white', vjust = 'center', hjust = 'inward')
+```
+
+```{r echo = FALSE}
+crime_crash <- subset(redirected,redirected$Reported.Occ.Type.Division == 'Crime and Crash Demand')
+  
+agg_crime_crash <- crime_crash %>%
+  group_by(Reported.Occ.Type.Subgroup) %>%
+  summarise(added = sum(Events.Occurrences))
+
+agg_crime_crash$rel_freq <- agg_crime_crash$added / sum(agg_crime_crash$added)
+agg_crime_crash <- agg_crime_crash[order(agg_crime_crash$rel_freq, decreasing = TRUE),]
+colnames(agg_crime_crash) <- c('ReportedSubgroup', 'Occurrences', 'RelativeFrequency')
+```
+
+```{r echo = FALSE}
+plot_crime_crash <- ggplot(data = head(agg_crime_crash,n = 5),
+       aes(y = reorder(ReportedSubgroup,+Occurrences), x = Occurrences)) +
+  geom_bar(stat="identity", fill = 'purple', alpha = 0.7)+
+  labs(title = 'Top
+       Crime and Crash Demand',
+       y = 'Report Subgroup')+
+  theme(panel.grid = element_blank(),
+        panel.background = element_blank(),
+        plot.title = element_text(hjust = 0.5))+
+  geom_text(aes(label = Occurrences), color = 'black', vjust = 'center', hjust = 'inward')
+```
+
+From Figure 3, we can see that out of the social service activities and demand,over 57% involve harm or require care. Meanwhile for crime and crash demand, we can see over 73% involve suspicious behavior, and 21% involve breaches of peace. 
+
+```{r fig.height = 3,fig.width = 10, fig.align = 'center', fig.cap="Fig. 3: Bar charts of top report subgroups redirected to a Mental Health record", echo = FALSE}
+grid.arrange(plot_social_service, plot_crime_crash, ncol=2)
+```
+
+From police records, there were occurrences of mental health distress that were most often initially reported as either a crime, crash, or social service demand. If we were to look into reducing mental health incidents in the scope of police work, it would be good to look at these types of incidents and design better social support systems may be put in place.
+
+### III. iii. Is there a difference in how mental health incidents occur between city and non-city areas?
+From Figure 4, we can see a difference in the scale of occurrences, but a similar shape of the overarching trend for the two contexts; however there are differences in the hourly trends depending on the day of the week. For example, between 11AM to 6PM on Friday, there are fluctuations between how similar the trends are between the two contexts. These fluctuations then occur earlier on Sundays. There was also a distinct peak on Tuesdays in non-city contexts that was not present in city contexts. 
+```{r include = FALSE}
+tod <- subset(mh_incidents,mh_incidents$Occurrence.Hour.Of.Day != 99)
+
+agg_tod <- tod %>%
+  group_by(Occurrence.Hour.Of.Day, iscity, Occurrence.Day.Of.Week) %>%
+  summarise(Occurrences = sum(Events.Occurrences))
+
+colnames(agg_tod) <- c('HourOfDay', 'iscity', 'DayOfWeek','Occurrences')
+```
+
+```{r fig.height = 10, fig.width = 10, fig.align = 'center', fig.cap="Fig. 4: Line charts of Mental Health incidents by time of day for City and Non-City occurrences", echo = FALSE}
+plot_agg_tod <- agg_tod %>%
+  ggplot(aes(x = HourOfDay)) +
+  geom_line(aes(y = Occurrences, color = DayOfWeek))+
+  labs(title = 'Occurrences over Hour of Day by City Context',
+       y = 'Occurrences',
+       x = 'Hour of Day')+
+  scale_color_discrete(name = "City Context", labels = agg_tod$DayOfWeek)+
+  scale_x_continuous(breaks = seq(0,23,3),
+                     minor_breaks = seq(0,23,1))+
+  facet_grid(rows = vars(iscity))+
+  theme(panel.grid.major.x = element_line(color = 'gray'),
+        panel.grid.minor.x = element_line(color = 'lightgray'),
+        panel.background = element_blank(),
+        plot.title = element_text(hjust = 0.5),
+        legend.position = 'top')
+plot_agg_tod
+```
+
+Based on Figure 5, there are mostly similar proportions in terms of the split between true mental health incidents, redirections, and misreports between city and non-city contexts. This could mean there are similar levels of awareness in terms of requesting for help for mental distress. The big difference between the two is that the city context is more concentrated around specific areas; meanwhile, the non-city context is more spread out in lower volumes, which limits insights that could be derived from mere visual observation. For future studies, it would be good to compare these proportions for significant differences.
+
+```{r include = FALSE}
+by_region_city <- subset(mh_incidents, mh_incidents$iscity == 'City')
+by_region_noncity <- subset(mh_incidents, mh_incidents$iscity == 'Other')
+
+agg_region_city <- by_region_city %>%
+  group_by(Police.Area.TA,classification) %>%
+  summarise(added = sum(Events.Occurrences))
+
+region_ranking_city <- by_region_city %>%
+  group_by(Police.Area.TA) %>%
+  summarise(added = sum(Events.Occurrences))
+region_ranking_city <- region_ranking_city[order(region_ranking_city$added, decreasing = TRUE),]
+region_ranking_city$rank <- seq(1,nrow(region_ranking_city),1)
+
+ranked_region_city <- merge(agg_region_city, region_ranking_city, by = 'Police.Area.TA')
+ranked_region_city <- ranked_region_city[order(ranked_region_city$rank),]
+ranked_region_city$percentages <- ranked_region_city$added.x / ranked_region_city$added.y
+
+agg_region_noncity <- by_region_noncity %>%
+  group_by(Police.Area.TA,classification) %>%
+  summarise(added = sum(Events.Occurrences))
+
+region_ranking_noncity <- by_region_noncity %>%
+  group_by(Police.Area.TA) %>%
+  summarise(added = sum(Events.Occurrences))
+region_ranking_noncity <- region_ranking_noncity[order(region_ranking_noncity$added, decreasing = TRUE),]
+region_ranking_noncity$rank <- seq(1,nrow(region_ranking_noncity),1)
+
+ranked_region_noncity <- merge(agg_region_noncity, region_ranking_noncity, by = 'Police.Area.TA')
+ranked_region_noncity <- ranked_region_noncity[order(ranked_region_noncity$rank),]
+ranked_region_noncity$percentages <- ranked_region_noncity$added.x / ranked_region_noncity$added.y
+```
+
+```{r include = FALSE}
+plot_regions_city <- head(ranked_region_city, n = 15) %>% 
+  ggplot(aes(y = reorder(Police.Area.TA,+added.x), x = added.x)) +
+  geom_bar(aes(fill = classification), stat = 'identity')+
+  labs(title = 'Volume of Incidents
+       in Top 5 Police Areas (City)',
+       y = 'Police Areas',
+       x = 'Occurrences')+
+  theme(panel.grid.major.x = element_line(color = 'gray'),
+        panel.background = element_blank(),
+        plot.title = element_text(hjust = 0.5),
+        legend.position = 'bottom')
+```
+
+```{r include = FALSE}
+plot_regions_noncity <- head(ranked_region_noncity, n = 15) %>% 
+  ggplot(aes(y = reorder(Police.Area.TA,+added.x), x = added.x)) +
+  geom_bar(aes(fill = classification), stat = 'identity')+
+  labs(title = 'Volume of Incidents
+       in Top 5 Police Areas (Non-City)',
+       y = 'Police Areas',
+       x = 'Occurrences')+
+  theme(panel.grid.major.x = element_line(color = 'gray'),
+        panel.background = element_blank(),
+        plot.title = element_text(hjust = 0.5),
+        legend.position = 'bottom')
+```
+
+```{r fig.height = 4, fig.width = 12, fig.align = 'center', fig.cap="Fig. 5: Bar charts of top report subgroups redirected to a Mental Health record", echo = FALSE}
+grid.arrange(plot_regions_city, plot_regions_noncity, ncol=2)
+```
+
+## Summary
+
+Based on our findings, there has been an increase in the proportion of mental health incidents in police records. We also saw a portion of mental health incidents that was reported as different overt manifestations of mental distress, and found that they were mostly reported as social/service demand and activity, and crime. We then noticed similarities in the proportion of misclassified reports between city and non-city contexts. On the topic of city and non-city contexts, we noticed differences in the trends over the course of the day depending on the day of the week. Despite the limitations in the available dataset, there are signs of potential further analyses that could produce more definitive insights for actions that the government could take to reduce mental health incidents, and refocus the function of the police to allow for more specialized support to those experiencing mental distress. 
+
+## References
+
+[1] New Zealand Police. (2023, May 12). Demand and activity. https://www.police.govt.nz/about-us/statistics-and-publications/data-and-statistics/demand-and-activity
+
+[2] Scotcher, K. (2021, November 19). As police call-outs for mental health issues rise, the commissioner wants a new approach. RNZ. https://www.rnz.co.nz/news/national/456062/as-police-call-outs-for-mental-health-issues-rise-the-commissioner-wants-a-new-approach
+
+[3] Scotcher, K. (2021, November 18). Report states half of all mental health-related callouts in the past year went unattended by police. NZ Herald. https://www.nzherald.co.nz/nz/report-states-half-of-all-mental-health-related-callouts-in-the-past-year-went-unattended-by-police/DOLVP67YCE5HXHXKUO3CR2C7WY/
