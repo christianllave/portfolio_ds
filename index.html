@@ -42,9 +42,9 @@
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav">
                     <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#about">About</a></li>
-                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#experience">Experience</a></li>
                     <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#projects">Projects</a></li>
                     <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#engagements">Engagements</a></li>
+                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#experience">Experience</a></li>
                     <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#education">Education</a></li>
                     <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#skills">Skills</a></li>
                     <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#interests">Interests</a></li>
@@ -69,6 +69,140 @@
                         <a class="social-icon" href="https://www.linkedin.com/in/christianllave/"><i class="fab fa-linkedin-in"></i></a>
                         <a class="social-icon" href="https://github.com/christianllave"><i class="fab fa-github"></i></a>
                     </div>
+                    
+                </div>
+            </section>
+            <hr class="m-0" />
+
+            <!-- Projects-->
+            <section class="resume-section" id="projects">
+                <div class="resume-section-content">
+                    <h2 class="mb-5">Projects</h2>
+                    
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Ad Request Optimisation</h3>
+                            <div class="subheading mb-3">Increased profit margins by limiting ad requests to profitable observations.</div>
+                            <p>Supply-Side Platforms manage ad space by deciding which instances of web traffic would be good to show ads to;
+                                however, not all traffic is profitable, and sending these instances to the auction (real-time bidding) can be costly.
+                                The nature of the data and potential target variables were akin to the marketing funnel that had preceding steps that informed the latter.
+                                This project aimed to drop unprofitable traffic to save on costs, while retaining as much revenue as possible.
+                                As a solution in the digital ad industry, it must deliver the predictions in a fraction of a second.
+                            </p>
+                                
+                            <p>Given the nature of the data being mostly categorical, the solution made use of categorical features.
+                                I explored three ensemble frameworks commonly used for the said data type. Given the funnel-like nature of the data, 
+                                I created three different architectures:
+                                <ul>
+                                    <li><b>Simple:</b> directly predict each candidate target variable using identified features. This was simple and effective.</li>
+                                    <li><b>Narrowing:</b> have target variables learn only based on observations present in the preceding step.</li>
+                                    <li><b>Cascading:</b> predict succeeding target variables using outputs from previous steps of the funnel as features. This mimicked the real-time bidding behaviour most closely.</li>
+                                </ul>
+
+                                The delivered solution made use of a simple machine learning architecture to predict revenue.
+                                The result satisfied the company's data needs while having 20% less opportunity costs than the previous model.</p>
+
+                            <p>
+                                Additionally, this project had also undergone the production process by creating the accompanying assets: threshold seeker, hyperparameter tuning, modules, tests, a docker image, Airflow DAG and deploying as a cloud service. 
+                            </p>
+
+                            <p><b>Main Takeaways:</b>
+                                <ul>
+                                    <li>Categorical handling: exploratory analyses, transformations, imputation, and modelling.</li>
+                                    <li>Data engineering: performing ETL on data extracted from a cloud source.</li>
+                                    <li>Data science: decision-making and experimenting on different models, infrastructure, and methodologies.</li>
+                                    <li>Data analysis: visualisation and presentation of the solution's value to key stakeholders.</li>
+                                    <li>Software engineering: experiencing the process of putting code into production.</li>
+                                </ul>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">3-Step ETL Reporting Tool</h3>
+                            <div class="subheading mb-3">Integrate 5 Brand Data Sources programmatically to populate reporting records.</div>
+                            <p>Management makes use of spend, revenue, and eCommerce metrics to make marketing decisions.
+                                The stakeholders had a preference for tables that could be explored by date range and broken down by date.
+                                Another consideration for this project is the fact that the tool will be used by non-technical stakeholders.
+                            </p>
+                            
+                            <p>The way to accomplish the data needs was by integrating brand assets: Facebook, Instagram, Shopify, Google Ads, and Google Analytics into an interactive reporting tool.
+                                With non-technical stakeholders in mind, I have set my own limitations on top of meeting the data needs:
+                                <ul>
+                                    <li>I should not require them to code or install Python for them to use the tool.</li>
+                                    <li>The data should be formatted in a way they recognise: tabular like Excel.</li>
+                                    <li>Ensure fool-proof API access and security.</li>
+                                </ul>
+                                </p>
+                            
+                            <p>Google assets had native integrations to the selected reporting tool.
+                                For the other channels, I used their respective APIs to extract, transform, and store information on a cloud asset.
+                                I then integrated all the data on the reporting tool, created calculated fields that combined metrics from different sources,
+                                and created the necessary visualisations.
+                            </p>
+
+                            <p><b>Main takeaways:</b>
+                                <ul>
+                                    <li>One of the challenges at the time was dealing with APIs, which required a lot of reading up on documentation.
+                                        One of my main takeaways was to make my code style match the demands of each API's documentation.
+                                        This allowed me to follow the logic and ensure convenient points to edit my code should there be any changes in the documentation.
+                                    </li>
+                                    <li>Dealing with JSON objects meant I had to transform column values that were non-singular, such as lists and dictionaries.
+                                        Working on this project allowed me to develop ways to convert non-relational formats to relational in a vectorised fashion.
+                                        Using vectorised functions allowed for more efficiency as opposed to methods that iterate over observations.
+                                    </li>
+                                    <li>Having the end-user in mind allows for a clear picture of limitations in terms of user exprience and infrastructure.</li>
+                                </ul></p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0"><a href="https://github.com/christianllave/nz-police-data">Exploring mental health incidents in New Zealand Police Data</a></h3>
+                            <div class="subheading mb-3">Explore trends in mental health report misclassifications to the police as indicators of supplementary social services.</div>
+                            <p>In 2021, the New Zealand Police expressed a need to approach call-outs related to mental health issues.
+                                To free up the workload of the police force in that regard, it would be good to explore existing trends on mental health-related issues.
+                            <p>Using the NZ Police's Demand and Activity as the main data source,
+                                I used R to group and visualise police reports related to mental health based on the activity's classifications, time, and date.</p>
+                                
+                            <p>This allowed trends of mental health reports to surface, showing which aspects of social services could be focused on to provide better mental health support.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0"><a href="https://github.com/christianllave/api-yt">Youtube API Data Extraction</a></h3>
+                            <div class="subheading mb-3">Extract video and channel data from search queries, and store them to a database.</div>
+                            <p>For my first Python project, I wanted to understand popular video topics in a certain niche, and explore Youtube as a data source.
+                                One of the largest limitations to the project is the rate limit, which compelled me to consider an ETL process to avoid redundant extraction.
+                            </p>
+                            <p>I used Python to extract data, Pandas to perform transformations, and SQLITE to store the results. 
+                                In its first iteration, the project allowed for visualisations and inspections of overarching trends of videos and the connectedness of channels.
+                                In future iterations, I aim to apply machine learning techniques as a form of feature engineering or predictive analytics.</p>
+                            <p>I intend to use this project as a foundational data source for me to explore other data projects and techniques.</p>
+                        </div>
+                    </div>
+                    
+                </div>
+            </section>
+            <hr class="m-0" />
+
+            <!-- Engagements-->
+            <section class="resume-section" id="engagements">
+                <div class="resume-section-content">
+                    <h2 class="mb-5">Engagements</h2>
+                    
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Talked about basic <a href="https://www.meetup.com/christchurch-data-science-meetup/events/299564064/">Categorical Variable Handling</a></h3>
+                            <div class="subheading mb-3">For Christchurch Data Science Meetup</div>
+                            <p>Covered the introduction to data types, exploratory analyses, encoding, feature engineering, and machine learning options for categorical variables.</p>
+                        </div>
+                        <div class="flex-shrink-0"><span class="text-primary">20 March 2024</span></div>
+                    </div>
+                    
                     
                 </div>
             </section>
@@ -154,66 +288,6 @@
                 </div>
             </section>
             <hr class="m-0" />
-
-            <!-- Projects-->
-            <section class="resume-section" id="projects">
-                <div class="resume-section-content">
-                    <h2 class="mb-5">Projects</h2>
-                    
-                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-                        <div class="flex-grow-1">
-                            <h3 class="mb-0">Ad Request Optimisation</h3>
-                            <div class="subheading mb-3">Increased profit margins by limiting ad requests to profitable observations.</div>
-                            <p>Reduced opportunity costs by 20% compared to previous models using machine learning.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-                        <div class="flex-grow-1">
-                            <h3 class="mb-0">3-Step ETL Reporting Tool</h3>
-                            <div class="subheading mb-3">Integrate 5 Brand Data Sources programmatically to populate reporting records.</div>
-                            <p>Used Meta, Shopify, and Google APIs to populate records, and then integrated with Google Ads and Google Analytics.</p>
-                        </div>
-                    </div>
-
-                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-                        <div class="flex-grow-1">
-                            <h3 class="mb-0"><a href="https://github.com/christianllave/nz-police-data">Exploring mental health incidents in New Zealand Police Data</a></h3>
-                            <div class="subheading mb-3">Explore trends in mental health report misclassifications to the police as indicators of supplementary social services.</div>
-                        </div>
-                    </div>
-
-                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-                        <div class="flex-grow-1">
-                            <h3 class="mb-0"><a href="https://github.com/christianllave/api-yt">Youtube API Data Extraction</a></h3>
-                            <div class="subheading mb-3">Extract video and channel data from search queries, and store them to SQLITE.</div>
-                            <p>My first Python project inspired by the desire to understand popular video topics in a certain niche.
-                                Besides the initial visualisation, I envision this project to be a start of further analyses of topics for video media.</p>
-                        </div>
-                    </div>
-                    
-                </div>
-            </section>
-            <hr class="m-0" />
-
-            <!-- Engagements-->
-            <section class="resume-section" id="engagements">
-                <div class="resume-section-content">
-                    <h2 class="mb-5">Engagements</h2>
-                    
-                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
-                        <div class="flex-grow-1">
-                            <h3 class="mb-0">Talked about basic <a href="https://www.meetup.com/christchurch-data-science-meetup/events/299564064/">Categorical Variable Handling</a></h3>
-                            <div class="subheading mb-3">For Christchurch Data Science Meetup</div>
-                            <p>Covered the introduction to data types, exploratory analyses, encoding, feature engineering, and machine learning options for categorical variables.</p>
-                        </div>
-                        <div class="flex-shrink-0"><span class="text-primary">20 March 2024</span></div>
-                    </div>
-                    
-                    
-                </div>
-            </section>
-            <hr class="m-0" />
             
             <!-- Education-->
             <section class="resume-section" id="education">
@@ -265,6 +339,18 @@
                         </li>
                         <li>
                             <span class="fa-li"><i class="fas fa-check"></i></span>
+                            Data Management and Database Design
+                        </li>
+                        <li>
+                            <span class="fa-li"><i class="fas fa-check"></i></span>
+                            Digital Advertising and Marketing Consulting
+                        </li>
+                        <li>
+                            <span class="fa-li"><i class="fas fa-check"></i></span>
+                            Market Research
+                        </li>
+                        <li>
+                            <span class="fa-li"><i class="fas fa-check"></i></span>
                             Campaign Management
                         </li>
                         <li>
@@ -284,8 +370,12 @@
             <section class="resume-section" id="interests">
                 <div class="resume-section-content">
                     <h2 class="mb-5">Interests</h2>
-                    <p>Besides data science work, I enjoy activities like hiking and going to the gym.</p>
-                    <p class="mb-0">Meanwhile, my indoor hobbies consist of playing story-driven video games on PC. I also enjoy cooking and gardening.</p>
+                    <p>Besides data science work, I enjoy activities like:
+                        <ul>
+                            <li>Hiking and going to the gym: I like staying active, usually through a group fitness activity.</li>
+                            <li>Playing story-driven video games: I like interesting narratives in interactive media as it allows for a creative way to learn more about the world.</li>
+                            <li>Cooking: I cook for both practicality (through meal prep) and enjoyment (through the occasional indulgent treat).</li>
+                        </ul></p>
                 </div>
             </section>
             <hr class="m-0" />
@@ -297,7 +387,35 @@
                     <ul class="fa-ul mb-0">
                         <li>
                             <span class="fa-li"><i class="fas fa-trophy text-warning"></i></span>
-                            Certificate of Excellence (Master of Applied Data Science)
+                            University of Canterbury (Dec 2023): Certificate of Excellence (Master of Applied Data Science)
+                        </li>
+                        <li>
+                            <span class="fa-li"><i class="fas fa-trophy text-warning"></i></span>
+                            DataCamp (Apr 2021):
+                            <ul>
+                                <li>Introduction to Python</li>
+                                <li>Intermediate Python</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span class="fa-li"><i class="fas fa-trophy text-warning"></i></span>
+                            Google Analytics Academy:
+                            <ul>
+                                <li>Google Tag Manager Fundamentals (Mar 2021)</li>
+                                <li>Google Analytics for Beginners (Mar 2021)</li>
+                                <li>Advanced Google Analytics (Apr 2021)</li>
+                            </ul>
+                        </li>
+                        <li>
+                            <span class="fa-li"><i class="fas fa-trophy text-warning"></i></span>
+                            The Trade Desk:
+                            <ul>
+                                <li>Targeting and Data Management (Sep 2019)</li>
+                                <li>Programmatic Principles (Sep 2019)</li>
+                                <li>Optimization & Strategy (Sep 2019)</li>
+                                <li>Omnichannel & Inventory Types (Sep 2019)</li>
+                                <li>Connected TV Curriculum (Sep 2019)</li>
+                            </ul>
                         </li>
                     </ul>
                 </div>
