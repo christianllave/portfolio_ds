@@ -106,7 +106,7 @@
                                 Additionally, this project had also undergone the production process by creating the accompanying assets: threshold seeker, hyperparameter tuning, modules, tests, a docker image, Airflow DAG and deploying as a cloud service. 
                             </p>
 
-                            <p><b>Main Takeaways:</b>
+                            <p class="mb-1 text-secondary"><b>Main Takeaways:</b>
                                 <ul>
                                     <li>Categorical handling: exploratory analyses, transformations, imputation, and modelling.</li>
                                     <li>Data engineering: performing ETL on data extracted from a cloud source.</li>
@@ -130,9 +130,9 @@
                             <p>The way to accomplish the data needs was by integrating brand assets: Facebook, Instagram, Shopify, Google Ads, and Google Analytics into an interactive reporting tool.
                                 With non-technical stakeholders in mind, I have set my own limitations on top of meeting the data needs:
                                 <ul>
-                                    <li>I should not require them to code or install Python for them to use the tool.</li>
-                                    <li>The data should be formatted in a way they recognise: tabular like Excel.</li>
-                                    <li>Ensure fool-proof API access and security.</li>
+                                    <li class="mb-2">I should not require them to code or install Python for them to use the tool.</li>
+                                    <li class="mb-2">The data should be formatted in a way they recognise: tabular like Excel.</li>
+                                    <li class="mb-2">Ensure fool-proof API access and security.</li>
                                 </ul>
                                 </p>
                             
@@ -142,17 +142,17 @@
                                 and created the necessary visualisations.
                             </p>
 
-                            <p><b>Main takeaways:</b>
+                            <p class="mb-1 text-secondary"><b>Main takeaways:</b>
                                 <ul>
-                                    <li>One of the challenges at the time was dealing with APIs, which required a lot of reading up on documentation.
+                                    <li class="mb-2">One of the challenges at the time was dealing with APIs, which required a lot of reading up on documentation.
                                         One of my main takeaways was to make my code style match the demands of each API's documentation.
                                         This allowed me to follow the logic and ensure convenient points to edit my code should there be any changes in the documentation.
                                     </li>
-                                    <li>Dealing with JSON objects meant I had to transform column values that were non-singular, such as lists and dictionaries.
+                                    <li class="mb-2">Dealing with JSON objects meant I had to transform column values that were non-singular, such as lists and dictionaries.
                                         Working on this project allowed me to develop ways to convert non-relational formats to relational in a vectorised fashion.
                                         Using vectorised functions allowed for more efficiency as opposed to methods that iterate over observations.
                                     </li>
-                                    <li>Having the end-user in mind allows for a clear picture of limitations in terms of user exprience and infrastructure.</li>
+                                    <li class="mb-2">Having the end-user in mind allows for a clear picture of limitations in terms of user exprience and infrastructure.</li>
                                 </ul></p>
                         </div>
                     </div>
@@ -168,6 +168,16 @@
                                 
                             <p>This allowed trends of mental health reports to surface, showing which aspects of social services could be focused on to provide better mental health support.
                             </p>
+
+                            <p class="mb-1 text-secondary"><b>Main takeaways:</b>
+                                <ul>
+                                    <li class="mb-2">There is value in being able to engineer additional columns from existing ones (feature engineering) even for exploratory analyses like this.
+                                    </li>
+                                    <li class="mb-2">This is a good exercise for squeezing out options to find trends in data.
+                                    </li>
+                                    <li class="mb-2">For exploratory tasks, there is value in starting from line items with a high proportion of observations as a filter when drilling-down on data.</li>
+                                </ul>
+                            </p>
                         </div>
                     </div>
 
@@ -182,6 +192,18 @@
                                 In its first iteration, the project allowed for visualisations and inspections of overarching trends of videos and the connectedness of channels.
                                 In future iterations, I aim to apply machine learning techniques as a form of feature engineering or predictive analytics.</p>
                             <p>I intend to use this project as a foundational data source for me to explore other data projects and techniques.</p>
+
+                            <p class="mb-1 text-secondary"><b>Main takeaways:</b>
+                                <ul>
+                                    <li class="mb-2">Refactoring is useful for repeatable functions.
+                                    </li>
+                                    <li class="mb-2">When the cost of API calls is high, store API response results allows for the experimentation of the contents.
+                                    </li>
+                                    <li class="mb-2">There is value in making connections between the available data between API endpoints.</li>
+                                    <li class="mb-2">When result relevance is important, it's good to know if the API responses are already arranged by relevance to reduce the amount of data to store.</li>
+                                    <li class="mb-2">De-duplicating and batching allow for more efficient API querying by reducing the number of times calls are made.</li>
+                                </ul>
+                            </p>
                         </div>
                     </div>
                     
@@ -326,42 +348,68 @@
             <section class="resume-section" id="skills">
                 <div class="resume-section-content">
                     <h2 class="mb-5">Skills</h2>
+
                     <div class="subheading mb-3">Programming Languages & Tools</div>
-                    <ul class="list-inline dev-icons">
-                        <li class="list-inline-item"><i class="fab fa-python"></i></li>
-                        <li class="list-inline-item"><i class="fab fa-r-project"></i></li>
-                    </ul>
+                        <ul class="list-inline dev-icons mb-5">
+                            <li class="list-inline-item"><i class="fab fa-python"></i></li>
+                            <li class="list-inline-item"><i class="fab fa-r-project"></i></li>
+                            <li class="list-inline-item"><i class="fab fa-docker"></i></li>
+                            <li class="list-inline-item"><i class="fab fa-github"></i></li>
+                            <li class="list-inline-item"><i class="fab fa-aws"></i></li>
+                            <li class="list-inline-item"><i class="fab fa-shopify"></i></li>
+                        </ul>
+
+                    <div class="subheading mb-3">Other Programming Tools</div>
+                        <ul class="fa-ul mb-5">
+                            <li>
+                                <span class="fa-li"><i class="fas fa-check"></i></span>
+                                SQL / SQLITE
+                            </li>
+                            <li>
+                                <span class="fa-li"><i class="fas fa-check"></i></span>
+                                Apache Airflow
+                            </li>
+                            <li>
+                                <span class="fa-li"><i class="fas fa-check"></i></span>
+                                Google Cloud Platform APIs
+                            </li>
+                            <li>
+                                <span class="fa-li"><i class="fas fa-check"></i></span>
+                                Meta APIs
+                            </li>
+                        </ul>
+
                     <div class="subheading mb-3">Commercial Competencies</div>
-                    <ul class="fa-ul mb-0">
-                        <li>
-                            <span class="fa-li"><i class="fas fa-check"></i></span>
-                            Project Management
-                        </li>
-                        <li>
-                            <span class="fa-li"><i class="fas fa-check"></i></span>
-                            Data Management and Database Design
-                        </li>
-                        <li>
-                            <span class="fa-li"><i class="fas fa-check"></i></span>
-                            Digital Advertising and Marketing Consulting
-                        </li>
-                        <li>
-                            <span class="fa-li"><i class="fas fa-check"></i></span>
-                            Market Research
-                        </li>
-                        <li>
-                            <span class="fa-li"><i class="fas fa-check"></i></span>
-                            Campaign Management
-                        </li>
-                        <li>
-                            <span class="fa-li"><i class="fas fa-check"></i></span>
-                            Digital Analyses
-                        </li>
-                        <li>
-                            <span class="fa-li"><i class="fas fa-check"></i></span>
-                            Brand Audits
-                        </li>
-                    </ul>
+                        <ul class="fa-ul mb-5">
+                            <li>
+                                <span class="fa-li"><i class="fas fa-check"></i></span>
+                                Project Management
+                            </li>
+                            <li>
+                                <span class="fa-li"><i class="fas fa-check"></i></span>
+                                Data Management and Database Design
+                            </li>
+                            <li>
+                                <span class="fa-li"><i class="fas fa-check"></i></span>
+                                Digital Advertising and Marketing Consulting
+                            </li>
+                            <li>
+                                <span class="fa-li"><i class="fas fa-check"></i></span>
+                                Market Research
+                            </li>
+                            <li>
+                                <span class="fa-li"><i class="fas fa-check"></i></span>
+                                Campaign Management
+                            </li>
+                            <li>
+                                <span class="fa-li"><i class="fas fa-check"></i></span>
+                                Digital Analyses
+                            </li>
+                            <li>
+                                <span class="fa-li"><i class="fas fa-check"></i></span>
+                                Brand Audits
+                            </li>
+                        </ul>
                 </div>
             </section>
             <hr class="m-0" />
