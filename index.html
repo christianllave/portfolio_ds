@@ -91,6 +91,112 @@
                     
                     <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
                         <div class="flex-grow-1">
+                            <h3 class="mb-0">User churn model</h3>
+                            <div class="subheading mb-3">Predicting inactivity using activity, and the lack thereof</div>
+                            <p>Digital media rely on user activity to determine marketable audiences.
+                                Being able to predict churning users allow for retention efforts to be put in place.
+                                In this project, I defined churn as a 30-day streak of a logged-out state, or 30-day streak of non-listenership.
+                            </p>
+                                
+                            <p>My main considerations were:
+                                <ul>
+                                    <li><b>Data leakage:</b> Temporal splitting into 30, 60, 90 day windows of activity prevented this.</li>
+                                    <li><b>Representing user activity:</b> To level the amount of potential activity for each user, I used a moving window of time spent listening.</li>
+                                    <li><b>Including or excluding churned users in training:</b> Reactivation was uncommon, but the possibility of happening warranted its inclusion. Training a model including churned users improved model performance.</li>
+                                    <li><b>Correct training metric:</b> As it was important to determine actual churned users, I used the Precision-Recall AUC metric for tuning with Optuna.</li>
+                                    <li><b>Feature selection:</b> Absolute listenership is tied to activity, so I included changes in listenership, and directions of change as features to better inform the model. </li>
+                                </ul>
+                            </p>
+
+                            <p>
+                                The resulting model predicted around 70% of users correctly, with less than 10% being missed churners.
+                                Users are then assigned churn predictions based on the model, which informs the retention team for activation.
+                            </p>
+
+                            <p class="mb-1 text-secondary"><b>Main Takeaways:</b>
+                                <ul>
+                                    <li>Temporal considerations: splitting the dataset by time windows, engineering features based on time windows, representing inactivity (gaps vs numbers), representing change over time</li>
+                                    <li>Data science: decision-making and experimenting on different models, representations, and modelling components.</li>
+                                    <li>Data analysis: presentation of the model's behaviour to identify trends in user behaviour relevant to churn, broken down by brand and changes in user activity.</li>
+                                    <li>Data engineering: Identifying feature importance in the working model justifies more effort into data quality for relevant fields in the warehouse.</li>
+                                </ul>
+                            </p>
+                        </div>
+                    </div>
+
+
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">Google Analytics Raw Data: Wrangling</h3>
+                            <div class="subheading mb-3">Zero to Hero: From raw data to business-ready assets.</div>
+                            <p>At the nascency of this digital radio product, I focused on establishing big data pipelines to meet business needs
+                                for reporting, visualisation, and machine learning applications. Google Analytics as a platform
+                                displays aggregated data; however, the business required analyses involving event-level data.
+                                This prompted the need for the Raw Data, which scales up in volume relative to the brand's user activity. 
+                                With the requirements in mind, I ensured all my contributions were compute-optimised for the large-scale nature of the data.
+                            </p>
+                                
+                            <p> A number of core challenges arose from the nature of the data and the needs of the business:
+                                <ul>
+                                    <li><b>The table requires flattening to get relevant fields.</b></br>Using dataclasses and vectrorised operations in Snowflake Python (SnowPark, similar to PySpark):</li>
+                                        <ol>
+                                            <li>Determine all the fields that will be extracted.</li>
+                                            <li>Apply the extraction function to the nested field to extract the fields as columns.</li>
+                                            <li>Partition the data by event types (audio engagement, general engagement, etc) and apply the function by partition.</li>
+                                        </ol>
+                                        </br>This parallelised procedures and tasks, which enables smaller partitions (ex. onboarding events) to be processed independently from larger partitions (ex. audio engagement).
+                                        </br>
+                                        </br>
+
+                                    <li><b>Missing session IDs create unattributed engagement. The solution needed to be closer to deterministic considering errors would flow downstream.</b></br> The solution is similar to nearest neighbour model:</li>
+                                    <ol>
+                                        <li>Create an initial lookup table with the sessions, start and end times.</li>
+                                        <li>Create pseudo-identifiers for each event.</li>
+                                        <li>Map the events to the lookup table, and calculate each event's timestamp difference to the joined session's start and end timestamps.</li>
+                                        <li>Take the closest session within an acceptable time difference.</li>
+                                        <li>Iterate until no more mappable events are available.</li>
+                                    </ol>
+                                    </br>Reducing the null values in sessions allowed for a more complete means of calculating session counts per user and the session duration. Both are used mostly for reporting requirements.
+                                    </br>
+                                    </br> 
+                                    
+                                    <li><b>Missing user IDs for critical events like audio events meant unattributed listening metrics.</b></br> Solution:</li>
+                                    <ol>
+                                        <li>Determine mappable and unmappable user IDs.</li>
+                                        <li>Map 1:1 pseudo IDs with user IDs using a mapping table.</li>
+                                        <li>Map 1:many pseudo IDs with user IDs using window functions on Snowflake SQL. This attributes the most recent user ID to the event with a missing user ID.</li>
+                                    </ol>
+                                    </br> This imputed over 90% of null values for audio events, which attributes listening metrics to each user more accurately.
+                                    This is primarily in preparation for machine learning applications.
+                                    </br>
+                                    </br> 
+
+                                    <li><b>Backend data sending incorrect data</b>
+                                        </br>Some show_name values were assigned to the wrong brand and a constant 'ERROR' string occupied the user ID field. Solution:</li>
+                                    <ol>
+                                        <li>Communicate with the errors with the product team to send correct data for the succeeding records. </li>
+                                        <li>Once the correctly associated fields start coming in, create a mapping table using the latest assignments, and apply the mapping.</li>
+                                        <li>For constant values, apply the same 1:1 or 1:many mapping strategy.</li>
+                                    </ol>
+                                    </br>For reporting, this solution attributes the correct performance metrics to the brands.
+                                    For feature engineering, this assigns the correct degree and preference of listenership to the users. 
+                                </ul>
+
+                                This foundational initiative resulted in high quality useable data for querying, integrating, and modelling. </p>
+
+                            <p class="mb-1 text-secondary"><b>Main Takeaways:</b>
+                                <ul>
+                                    <li>Flattening, transforming, and imputing large-scale tables without default join keys.</li>
+                                    <li>Partitioning, parallel processing, vectorisation, and caching helped with computational efficiency.</li>
+                                    <li>Mapping functions support categorical imputation; however, it is best to communicate with developers to fix data issues on the backend.</li>
+                                </ul>
+                            </p>
+                        </div>
+                    </div>
+
+                    
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
                             <h3 class="mb-0">Ad Request Optimisation</h3>
                             <div class="subheading mb-3">Increased profit margins by limiting ad requests to profitable observations.</div>
                             <p>Supply-Side Platforms manage ad space by deciding which instances of web traffic would be good to show ads to;
@@ -244,6 +350,40 @@
             <section class="resume-section" id="experience">
                 <div class="resume-section-content">
                     <h2 class="mb-5">Experience</h2>
+
+
+                        <div class="d-flex flex-column flex-md-row justify-content-between mb-3">
+
+                            <div class="flex-grow-1">
+                                <h3 class="mb-0">Data Scientist</h3>
+                                <div class="subheading mb-3">MediaWorks</div>
+                                <p>To guide business strategy, I used large volumes and a variety of data to develop machine learning (ML) models,
+                                    such as user activity and churn modelling using Python and Snowflake.
+                                    With digital radio data in its nascent state, I pioneered the end-to-end development
+                                    and automation of scalable data pipelines tailored to serve ML models and reports,
+                                    ensuring efficient deployment and monitoring.</p>
+                            </div>
+                            <div class="flex-shrink-0"><span class="text-primary">June 2024 - Present</span></div>
+                        </div>
+                        <div class="accordion mb-5" id="experienceStroeer">
+                            <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#stroeerCollapsed">Contributions as a data scientist</button>
+                            <div id="stroeerCollapsed" class="accordion-collapse collapse" data-bs-parent="#experienceStroeer">
+                                <div class="accordion-body">
+                                    <ul>
+                                        <li>Pioneered and owned developing, deploying, and optimising big data pipelines for app and website data via Python and Snowflake. This results in a single source of truth for app and website data at a granular scale.</li>
+                                        <li>Increased user data quality by 90% using imputation models with Snowflake SQL.</li>
+                                        <li>Predicted the #1 song and artist on The Rock 2000 Countdown for 2024 using machine learning.</li>
+                                        <li>Fine-tuned a Retrieval-Augmented Generation chatbot model for financial reporting data.</li>
+                                        <li>Developed and automated ETL apps that connect to APIs via Python and Snowflake.</li>
+                                        <li>Developed bespoke engagement metrics to model listening behaviour more accurately compared to legacy methods.</li>
+                                        <li>Guided business strategy by forecasting user activity and churn using machine learning, and presented insights using automated interactive Tableau dashboards.</li>
+                                        <li>Modelled the database structure for scalable and compute-optimised reporting, visualisation, and machine learning.</li>
+                                        <li>Advise on digital analytics and marketing operations such as information gathering and integrations.</li>
+                                        <li>Spearheaded using GitHub and established guidelines within the Business Intelligence and Analytics team.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
                         
                         <div class="d-flex flex-column flex-md-row justify-content-between mb-3">
 
@@ -517,6 +657,10 @@
 
                     <div class="subheading mb-3">Other Programming Tools</div>
                         <ul class="fa-ul mb-5">
+                            <li>
+                                <span class="fa-li"><i class="fas fa-check"></i></span>
+                                Snowflake + SnowPark
+                            </li>
                             <li>
                                 <span class="fa-li"><i class="fas fa-check"></i></span>
                                 SQL / SQLITE
