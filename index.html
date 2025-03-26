@@ -134,55 +134,65 @@
                                 displays aggregated data; however, the business required analyses involving event-level data.
                                 This prompted the need for the Raw Data, which scales up in volume relative to the brand's user activity. 
                                 With the requirements in mind, I ensured all my contributions were compute-optimised for the large-scale nature of the data.
+                                This foundational initiative resulted in high quality useable data for querying, integrating, and modelling. 
                             </p>
                                 
-                            <p> A number of core challenges arose from the nature of the data and the needs of the business:
-                                <ul>
-                                    <li><b>The table requires flattening to get relevant fields.</b></br>Using dataclasses and vectrorised operations in Snowflake Python (SnowPark, similar to PySpark):</li>
-                                        <ol>
-                                            <li>Determine all the fields that will be extracted.</li>
-                                            <li>Apply the extraction function to the nested field to extract the fields as columns.</li>
-                                            <li>Partition the data by event types (audio engagement, general engagement, etc) and apply the function by partition.</li>
-                                        </ol>
-                                        </br>This parallelised procedures and tasks, which enables smaller partitions (ex. onboarding events) to be processed independently from larger partitions (ex. audio engagement).
-                                        </br>
-                                        </br>
-
-                                    <li><b>Missing session IDs create unattributed engagement.</b></br> The solution needed to be closer to deterministic considering errors would flow downstream, so I went with a nearest neighbour model:</li>
-                                    <ol>
-                                        <li>Create an initial lookup table with the sessions, start and end times.</li>
-                                        <li>Create pseudo-identifiers for each event.</li>
-                                        <li>Map the events to the lookup table, and calculate each event's timestamp difference to the joined session's start and end timestamps.</li>
-                                        <li>Take the closest session within an acceptable time difference.</li>
-                                        <li>Iterate until no more mappable events are available.</li>
-                                    </ol>
-                                    </br>Reducing the null values in sessions allowed for a more complete means of calculating session counts per user and the session duration. Both are used mostly for reporting requirements.
-                                    </br>
-                                    </br> 
-                                    
-                                    <li><b>Missing user IDs for critical events like audio events meant unattributed listening metrics.</b></br> Solution:</li>
-                                    <ol>
-                                        <li>Determine mappable and unmappable user IDs.</li>
-                                        <li>Map 1:1 pseudo IDs with user IDs using a mapping table.</li>
-                                        <li>Map 1:many pseudo IDs with user IDs using window functions on Snowflake SQL. This attributes the most recent user ID to the event with a missing user ID.</li>
-                                    </ol>
-                                    </br> This imputed over 90% of null values for audio events, which attributes listening metrics to each user more accurately.
-                                    This is primarily in preparation for machine learning applications.
-                                    </br>
-                                    </br> 
-
-                                    <li><b>Backend data sending incorrect data</b>
-                                        </br>Some show_name values were assigned to the wrong brand and a constant 'ERROR' string occupied the user ID field. Solution:</li>
-                                    <ol>
-                                        <li>Communicate with the errors with the product team to send correct data for the succeeding records. </li>
-                                        <li>Once the correctly associated fields start coming in, create a mapping table using the latest assignments, and apply the mapping.</li>
-                                        <li>For constant values, apply the same 1:1 or 1:many mapping strategy.</li>
-                                    </ol>
-                                    </br>For reporting, this solution attributes the correct performance metrics to the brands.
-                                    For feature engineering, this assigns the correct degree and preference of listenership to the users. 
-                                </ul>
-
-                                This foundational initiative resulted in high quality useable data for querying, integrating, and modelling. </p>
+                            <p  class="mb-1 text-secondary"><b>A number of core challenges arose from the nature of the data and the needs of the business:</b>
+                                <div class="accordion mb-5" id="rova1">
+                                    <button class="accordion-button collapsed mb-3" data-bs-toggle="collapse" data-bs-target="#rova1collapesed">The table requires flattening to get relevant fields.</button>
+                                    <div id="rova1collapesed" class="accordion-collapse collapse" data-bs-parent="#rova1">
+                                        <div class="accordion-body">
+                                            <p>Using dataclasses and vectrorised operations in Snowflake Python (SnowPark, similar to PySpark):</p>
+                                            <ol>
+                                                <li>Determine all the fields that will be extracted.</li>
+                                                <li>Apply the extraction function to the nested field to extract the fields as columns.</li>
+                                                <li>Partition the data by event types (audio engagement, general engagement, etc) and apply the function by partition.</li>
+                                            </ol>
+                                            This parallelised procedures and tasks, which enables smaller partitions (ex. onboarding events) to be processed independently from larger partitions (ex. audio engagement).
+                                        </div>
+                                    </div>
+                                    <button class="accordion-button collapsed mb-3" data-bs-toggle="collapse" data-bs-target="#rova2collapsed">Missing session IDs create unattributed engagement.</button>
+                                    <div id="rova2collapsed" class="accordion-collapse collapse" data-bs-parent="#rova1">
+                                        <div class="accordion-body">
+                                            <p>The solution needed to be closer to deterministic considering errors would flow downstream, so I went with a nearest neighbour model:</p>
+                                            <ol>
+                                                <li>Create an initial lookup table with the sessions, start and end times.</li>
+                                                <li>Create pseudo-identifiers for each event.</li>
+                                                <li>Map the events to the lookup table, and calculate each event's timestamp difference to the joined session's start and end timestamps.</li>
+                                                <li>Take the closest session within an acceptable time difference.</li>
+                                                <li>Iterate until no more mappable events are available.</li>
+                                            </ol>
+                                            Reducing the null values in sessions allowed for a more complete means of calculating session counts per user and the session duration. Both are used mostly for reporting requirements.
+                                        </div>
+                                    </div>
+                                    <button class="accordion-button collapsed mb-3" data-bs-toggle="collapse" data-bs-target="#rova3collapsed">Missing user IDs for critical events like audio events meant unattributed listening metrics.</button>
+                                    <div id="rova3collapsed" class="accordion-collapse collapse" data-bs-parent="#rova1">
+                                        <div class="accordion-body">
+                                            <p>Solution:</p>
+                                            <ol>
+                                                <li>Determine mappable and unmappable user IDs.</li>
+                                                <li>Map 1:1 pseudo IDs with user IDs using a mapping table.</li>
+                                                <li>Map 1:many pseudo IDs with user IDs using window functions on Snowflake SQL. This attributes the most recent user ID to the event with a missing user ID.</li>
+                                            </ol>
+                                            This imputed over 90% of null values for audio events, which attributes listening metrics to each user more accurately.
+                                            This is primarily in preparation for machine learning applications.
+                                        </div>
+                                    </div>
+                                    <button class="accordion-button collapsed mb-3" data-bs-toggle="collapse" data-bs-target="#rova4collapsed">Backend data sending incorrect data</button>
+                                    <div id="rova4collapsed" class="accordion-collapse collapse" data-bs-parent="#rova1">
+                                        <div class="accordion-body">
+                                            <p>Some show_name values were assigned to the wrong brand and a constant 'ERROR' string occupied the user ID field. Solution:</p>
+                                            <ol>
+                                                <li>Communicate with the errors with the product team to send correct data for the succeeding records. </li>
+                                                <li>Once the correctly associated fields start coming in, create a mapping table using the latest assignments, and apply the mapping.</li>
+                                                <li>For constant values, apply the same 1:1 or 1:many mapping strategy.</li>
+                                            </ol>
+                                            For reporting, this solution attributes the correct performance metrics to the brands.
+                                            For feature engineering, this assigns the correct degree and preference of listenership to the users.
+                                        </div>
+                                    </div>
+                                </div>
+                            </p>
 
                             <p class="mb-1 text-secondary"><b>Main Takeaways:</b>
                                 <ul>
