@@ -90,6 +90,118 @@
             <section class="resume-section" id="projects">
                 <div class="resume-section-content">
                     <h2 class="mb-5">Projects</h2>
+
+
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0"><a href="https://github.com/christianllave/mind-reco/blob/main/notebooks/evaluate.ipynb">Rebuilding evaluation calculations for recommendation systems</a></h3>
+                            <div class="subheading mb-3">A lot of models work. Evaluation metrics tell us which ones work well.</div>
+                            <p>
+                                While I was working on a baseline recommendation model using implicit,
+                                I noticed the evaluation module threw errors when running the usual error metrics (NDCG, Precision, Recall).
+                                This made it difficult to determine how well my baseline model performed vis-a-vis other methods.
+                                Upon some research, the accepted solution was to rebuild the module.
+                            </p>
+
+                            <p>
+                                I'm mostly interested in the NDCG metric, so I'll start with that.
+                                For reference, I'm following this <a href="https://dl.acm.org/doi/pdf/10.1145/3394486.3403226">paper</a>, which describes each metric.
+                            </p>
+                                
+                            <p  class="mb-1 text-secondary"><b>Considerations for the approach:</b>
+                                <div class="accordion mb-5" id="implicit-evaluation">
+                                    <button class="accordion-button collapsed mb-3" data-bs-toggle="collapse" data-bs-target="#implicit1collapsed">Numpy+Scipy instead of Cython loops</button>
+                                    <div id="implicit1collapsed" class="accordion-collapse collapse" data-bs-parent="#implicit-evaluation">
+                                        <div class="accordion-body">
+                                            <p>
+                                                Loops have their place in evaluating recommendation outputs,
+                                                as the metrics are often expressed in iterations and positions that determine the rank of an item.
+                                                Cython is said to be more optimised at loops compared to regular Python,
+                                                which may be why it was used in the original implicit evaluation module.
+                                                However, as someone just prototyping, I found setting up C to be an additional overhead, which trickles down to the succeeding stages. 
+                                            </p>
+                                            <p>
+                                                <b>Result:</b>
+                                                I chose a vectorised approach using Numpy arrays and range logic as opposed to loops as an alternative method.
+                                            </p>
+                                            
+                                        </div>
+                                    </div>
+                                    <button class="accordion-button collapsed mb-3" data-bs-toggle="collapse" data-bs-target="#implicit2collapsed">Comparing predicted values vs validation data</button>
+                                    <div id="implicit2collapsed" class="accordion-collapse collapse" data-bs-parent="#implicit-evaluation">
+                                        <div class="accordion-body">
+                                            <p>The recommended item needs to be associated with at least two properties (relevance, position in the recommendation). Three methods came to mind:</p>
+                                            <ul>
+                                                <li><b>The original module used batched loops across users and recommendations (as lists):</b> This is straightforward and made efficient with Cython. However, this method is outside the scope of this project.</li>
+                                                <li><b>Use the explode method on Pandas:</b> This maintains the order and position of recommendations. This can work with a small number (K) of recommendations for each user, as using this method increases the size of the data K times. This can cause troubles for those working on limited memory.</li>
+                                                <li><b>Compare sparse matrices directly:</b> The sparse property of the matrix representation allows for memory efficiency. Using the position as data values preserves the order of recommendation.</li>
+                                            </ul>
+                                            
+                                            <p>
+                                                <b>Result:</b>
+                                                Produced a new dataframe that indicated the recommendations' relevance as indicated by a positive position value.
+                                        </p>
+
+                                        </div>
+                                    </div>
+                                    <button class="accordion-button collapsed mb-3" data-bs-toggle="collapse" data-bs-target="#implicit3collapsed">Array operations on Pandas dataframes</button>
+                                    <div id="implicit3collapsed" class="accordion-collapse collapse" data-bs-parent="#implicit-evaluation">
+                                        <div class="accordion-body">
+                                            <p>
+                                                Array operations within Pandas was not as straightforward as doing math on int or float values. To regain access to element-wise array operations:
+                                            </p>
+                                            <ul>
+                                                <li>Use the Pandas Series as a Numpy array by using the pandas.Series.values method.</li>
+                                                <li>Use numpy.stack to convert the 1D array of arrays into a 2D array.</li>
+                                                <li>Apply the mathematical operations.</li>
+                                                <li>Re-assign to the Pandas Dataframe column using the list function.</li>
+                                            </ul>
+                                            
+                                            <p>
+                                                We can then calculate for the NDCG components:
+                                                <ol>
+                                                    <li><b>Delta function:</b> Zero out non-positive position values.</li>
+                                                    <li><b>Adjusted position and index:</b> Accounts for the (i+1) term in the original NDCG formula.</li>
+                                                    <li><b>Discounted Gain:</b> Element-wise quotient of the delta function and the log of the adjusted position.</li>
+                                                    <li><b>Discounted Cumulative Gain:</b> The sum of the array for each user expressed as either an array (via cumsum) or float (via sum).</li>
+                                                </ol>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <button class="accordion-button collapsed mb-3" data-bs-toggle="collapse" data-bs-target="#implicit4collapsed">IDCG cannot be represented as a jagged array in Numpy.</button>
+                                    <div id="implicit4collapsed" class="accordion-collapse collapse" data-bs-parent="#implicit-evaluation">
+                                        <div class="accordion-body">
+                                            <p>
+                                                Instead of a fixed K-sized list, IDCG is based on the number of relevant items for each user.
+                                                This means the size of the list of relevant items for each user is at most K, but could be less if they have fewer relevant items.
+                                                Representing the number of relevant items as a list intuitively would call for a jagged array;
+                                                however this is not supported in Numpy as of writing.
+                                                This leads us to padding the rest of the array as 0 to keep a uniform list size.
+                                                Zero is used as it doesn't interfere with the necessary calculation. 
+                                            </p>
+                                            <p>
+                                                <b>Result:</b> This accounts for the IDCG component to NDCG.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </p>
+
+                            <p>
+                                Given the DCG and IDCG for each user, the NDCG was also calculated. The final score is the mean of NDCG values for each user.
+                            </p>
+
+                            <p class="mb-1 text-secondary"><b>Main Takeaways:</b>
+                                <ul>
+                                    <li><b>Sparse Matrices:</b> Memory-efficient matrix representation of pairs as opposed to dense pivot tables.</li>
+                                    <li><b>Matrix comparison:</b> Manipulating components of a sparse matrix and performing operations between matrices to get the necessary unions and intersections of data.</li>
+                                    <li><b>Array operations on DataFrames:</b> An alternative to doing nested loops for tabular data.</li>
+                                    <li><b>Padded arrays:</b> Used to work around the lack of support for jagged arrays. Limited to use cases where padding doesn't interfere with calculations.</li>
+                                </ul>
+                            </p>
+                        </div>
+                    </div>
+
                     
                     <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
                         <div class="flex-grow-1">
@@ -236,11 +348,11 @@
 
                             <p class="mb-1 text-secondary"><b>Main Takeaways:</b>
                                 <ul>
-                                    <li>Categorical handling: exploratory analyses, transformations, imputation, and modelling.</li>
-                                    <li>Data engineering: performing ETL on data extracted from a cloud source.</li>
-                                    <li>Data science: decision-making and experimenting on different models, infrastructure, and methodologies.</li>
-                                    <li>Data analysis: visualisation and presentation of the solution's value to key stakeholders.</li>
-                                    <li>Software engineering: experiencing the process of putting code into production.</li>
+                                    <li><b>Categorical handling:</b> Exploratory analyses, transformations, imputation, and modelling.</li>
+                                    <li><b>Data engineering:</b> Performing ETL on data extracted from a cloud source.</li>
+                                    <li><b>Data science:</b> Decision-making and experimenting on different models, infrastructure, and methodologies.</li>
+                                    <li><b>Data analysis:</b> Visualisation and presentation of the solution's value to key stakeholders.</li>
+                                    <li><b>Software engineering:</b> Experiencing the process of putting code into production.</li>
                                 </ul>
                             </p>
                         </div>
