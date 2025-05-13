@@ -150,21 +150,21 @@
                                             <p>
                                                 Array operations within Pandas was not as straightforward as doing math on int or float values. To regain access to element-wise array operations:
                                             </p>
-                                            <ul>
+                                            <ol>
                                                 <li>Use the Pandas Series as a Numpy array by using the pandas.Series.values method.</li>
                                                 <li>Use numpy.stack to convert the 1D array of arrays into a 2D array.</li>
                                                 <li>Apply the mathematical operations.</li>
                                                 <li>Re-assign to the Pandas Dataframe column using the list function.</li>
-                                            </ul>
+                                            </ol>
                                             
                                             <p>
                                                 We can then calculate for the NDCG components:
-                                                <ol>
+                                                <ul>
                                                     <li><b>Delta function:</b> Zero out non-positive position values.</li>
                                                     <li><b>Adjusted position and index:</b> Accounts for the (i+1) term in the original NDCG formula.</li>
                                                     <li><b>Discounted Gain:</b> Element-wise quotient of the delta function and the log of the adjusted position.</li>
                                                     <li><b>Discounted Cumulative Gain:</b> The sum of the array for each user expressed as either an array (via cumsum) or float (via sum).</li>
-                                                </ol>
+                                                </ul>
                                             </p>
                                         </div>
                                     </div>
