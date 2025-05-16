@@ -100,12 +100,14 @@
                                 While I was working on a baseline recommendation model using implicit,
                                 I noticed the evaluation module threw errors when running the usual error metrics (NDCG, Precision, Recall).
                                 This made it difficult to determine how well my baseline model performed vis-a-vis other methods.
-                                Upon some research, the accepted solution was to rebuild the module.
+                                Upon some research, the <a href="https://github.com/benfred/implicit/issues/726#issuecomment-2632016615">accepted solution</a> was to perform the evaluation manually.
                             </p>
 
                             <p>
                                 I'm mostly interested in the NDCG metric, so I'll start with that.
                                 For reference, I'm following this <a href="https://dl.acm.org/doi/pdf/10.1145/3394486.3403226">paper</a>, which describes each metric.
+                                The <a href="https://github.com/benfred/implicit/blob/main/implicit/evaluation.pyx#L366">original implicit evaluation module</a> used Cython with loops,
+                                and the cited GitHub answer seems to use Python loops. I want to explore a different method without (or with fewer) loops.
                             </p>
                                 
                             <p  class="mb-1 text-secondary"><b>Considerations for the approach:</b>
