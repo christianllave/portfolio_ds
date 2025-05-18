@@ -94,59 +94,90 @@
 
                     <div class="d-flex flex-column flex-md-row justify-content-between mb-5">
                         <div class="flex-grow-1">
-                            <h3 class="mb-0"><a href="https://github.com/christianllave/mind-reco-public/blob/d7a3745f48ccb50dfb8cd19964d7dc021c0b666a/notebooks/evaluate-annotated.ipynb">Rebuilding evaluation calculations for recommendation systems</a></h3>
+                            <h3 class="mb-0"><a href="https://github.com/christianllave/mind-reco-public/blob/main/html/evaluate-annotated-v2.md">Rebuilding evaluation calculations for recommendation systems</a></h3>
                             <div class="subheading mb-3">A lot of models work. Evaluation metrics tell us which ones work well.</div>
                             <p>
-                                While I was working on a baseline recommendation model using the Python package "implicit",
-                                I noticed the evaluation module threw errors when running the usual error metrics (NDCG, Precision, Recall).
-                                This made it difficult to determine how well my baseline model performed vis-a-vis other methods.
-                                Upon some research, the <a href="https://github.com/benfred/implicit/issues/726#issuecomment-2632016615">accepted solution</a> was to perform the evaluation manually.
-                            </p>
+                                Evaluation metrics describe how well a model predicts on unseen data, and are used in fine-tuning.
+                                In the Python package "implicit", the evaluation module returned errors for common metrics, such as Normalised Discounted Cumulative Gain (NDCG).
+                                After some research, the <a href="https://github.com/benfred/implicit/issues/726#issuecomment-2632016615">accepted solution</a> was to perform the evaluation manually.
 
-                            <p>
-                                I'm mostly interested in the NDCG metric, so I'll start with that.
-                                For reference, I'm following this <a href="https://dl.acm.org/doi/pdf/10.1145/3394486.3403226">paper</a>, which describes each metric.
-                                The <a href="https://github.com/benfred/implicit/blob/main/implicit/evaluation.pyx#L366">original evaluation code</a> used Cython with loops,
-                                and the cited GitHub answer seems to use Python loops. I want to explore a different method without (or with fewer) loops.
+                                <p class="mb-1 text-secondary"><b>Goal:</b> Create my own version of the evaluation module.<br></p>
                             </p>
-                                
+                            
                             <p  class="mb-1 text-secondary"><b>Considerations for the approach:</b>
                                 <div class="accordion mb-5" id="implicit-evaluation">
-                                    <button class="accordion-button collapsed mb-3" data-bs-toggle="collapse" data-bs-target="#implicit1collapsed">Numpy+Scipy instead of Cython loops</button>
+                                    <button class="accordion-button collapsed mb-3" data-bs-toggle="collapse" data-bs-target="#implicit0collapsed">Starting Metric</button>
+                                    <div id="implicit0collapsed" class="accordion-collapse collapse" data-bs-parent="#implicit-evaluation">
+                                        <div class="accordion-body">
+                                            <p>
+                                                I'm particularly interested in the NDCG metric,
+                                                because it accounts for the position and relevance of a recommended item.
+                                                Starting with NDCG also allows for the easier addition of other metrics (eg. Precision, Recall, and AUC)
+                                                because they make use of the components of NDCG.
+                                            </p>
+
+                                            <p>
+                                                <b>Result:</b>
+                                                I chose a NDCG metric as a starting point.
+                                            </p>
+
+                                            <p>
+                                                For reference, I'm following this <a href="https://dl.acm.org/doi/pdf/10.1145/3394486.3403226">paper</a>, which describes each metric.    
+                                            </p>
+                                            
+                                        </div>
+                                    </div>
+                                    <button class="accordion-button collapsed mb-3" data-bs-toggle="collapse" data-bs-target="#implicit1collapsed">Iteration Approach</button>
                                     <div id="implicit1collapsed" class="accordion-collapse collapse" data-bs-parent="#implicit-evaluation">
                                         <div class="accordion-body">
                                             <p>
                                                 Loops have their place in evaluating recommendation outputs,
                                                 as the metrics are often expressed in iterations and positions that determine the rank of an item.
                                                 Cython is said to be more optimised at loops compared to regular Python,
-                                                which may be why it was used in the original implicit evaluation module.
-                                                However, as someone just prototyping, I found setting up C to be an additional overhead, which trickles down to the succeeding stages. 
+                                                which may be why it was used in the <a href="https://github.com/benfred/implicit/blob/main/implicit/evaluation.pyx#L366">original evaluation module</a>.
+                                                However, I found setting up C to be an additional overhead at the prototyping and tuning stages. 
                                             </p>
                                             <p>
                                                 <b>Result:</b>
-                                                I chose a vectorised approach using Numpy arrays and range logic as opposed to loops as an alternative method.
+                                                I chose a vectorised approach using Numpy arrays, range logic, and SciPy matrices as opposed to loops as an alternative method.
                                             </p>
                                             
                                         </div>
                                     </div>
-                                    <button class="accordion-button collapsed mb-3" data-bs-toggle="collapse" data-bs-target="#implicit2collapsed">Comparing predicted values vs validation data</button>
+                                    <button class="accordion-button collapsed mb-3" data-bs-toggle="collapse" data-bs-target="#implicit2collapsed">Validating Predictions</button>
                                     <div id="implicit2collapsed" class="accordion-collapse collapse" data-bs-parent="#implicit-evaluation">
                                         <div class="accordion-body">
                                             <p>The recommended item needs to be associated with at least two properties (relevance, position in the recommendation). Three methods came to mind:</p>
                                             <ul>
-                                                <li><b>The original module used batched loops across users and recommendations (as lists):</b> This is straightforward and made efficient with Cython. However, this method is outside the scope of this project.</li>
-                                                <li><b>Use the explode method on Pandas:</b> This maintains the order and position of recommendations. This can work with a small number (K) of recommendations for each user, as using this method increases the size of the data K times. This can cause troubles for those working on limited memory.</li>
-                                                <li><b>Compare sparse matrices directly:</b> The sparse property of the matrix representation allows for memory efficiency. Using the position as data values preserves the order of recommendation.</li>
+                                                <li><b>Batched loops</b> on either the sparse matrix or long-form user interaction dataframe
+                                                    <ul>
+                                                        <li>This is straightforward and made efficient with Cython. However, without Cython, it may run into performance issues.</li>
+                                                        <li>This method is outside the scope of this project.</li>
+                                                    </ul>
+                                                </li>
+                                                <li><b>Use the explode method on Pandas</b> on a long-form user interaction dataframe
+                                                    <ul>
+                                                        <li>Maintains the order and position of recommendations. </li>
+                                                        <li>Can work with a small number (K) of recommendations for each user, as using this method increases the size of the data K times.</li>
+                                                        <li>Can cause troubles for those working on limited memory.</li>
+                                                    </ul>
+                                                </li>
+                                                <li><b>Compare sparse matrices directly</b>
+                                                    <ul>
+                                                        <li>The sparse property of the matrix representation allows for memory efficiency.</li>
+                                                        <li>Using the position as data values preserves the order of recommendation.</li>
+                                                    </ul>
+                                                </li>
                                             </ul>
                                             
                                             <p>
                                                 <b>Result:</b>
                                                 Produced a new dataframe that indicated the recommendations' relevance as indicated by a positive position value.
-                                        </p>
+                                            </p>
 
                                         </div>
                                     </div>
-                                    <button class="accordion-button collapsed mb-3" data-bs-toggle="collapse" data-bs-target="#implicit3collapsed">Array operations on Pandas dataframes</button>
+                                    <button class="accordion-button collapsed mb-3" data-bs-toggle="collapse" data-bs-target="#implicit3collapsed">Array Operations on Pandas</button>
                                     <div id="implicit3collapsed" class="accordion-collapse collapse" data-bs-parent="#implicit-evaluation">
                                         <div class="accordion-body">
                                             <p>
@@ -160,46 +191,68 @@
                                             </ol>
                                             
                                             <p>
-                                                We can then calculate for the NDCG components:
-                                                <ul>
-                                                    <li><b>Delta function:</b> Zero out non-positive position values.</li>
-                                                    <li><b>Adjusted position and index:</b> Accounts for the (i+1) term in the original NDCG formula.</li>
-                                                    <li><b>Discounted Gain:</b> Element-wise quotient of the delta function and the log of the adjusted position.</li>
-                                                    <li><b>Discounted Cumulative Gain:</b> The sum of the array for each user expressed as either an array (via cumsum) or float (via sum).</li>
-                                                </ul>
+                                                <b>Result:</b>
+                                                We can then calculate for the NDCG components: Delta function, Discounted Gain, Discounted Cumulative Gain
+                                            </p>
+
+                                            <p>
+                                                For the annotated code:
+                                                <a href="https://github.com/christianllave/mind-reco-public/blob/main/html/evaluate-annotated-v2.md">Read more</a>
                                             </p>
                                         </div>
                                     </div>
-                                    <button class="accordion-button collapsed mb-3" data-bs-toggle="collapse" data-bs-target="#implicit4collapsed">IDCG cannot be represented as a jagged array in Numpy.</button>
+                                    <button class="accordion-button collapsed mb-3" data-bs-toggle="collapse" data-bs-target="#implicit4collapsed">Handling jagged arrays</button>
                                     <div id="implicit4collapsed" class="accordion-collapse collapse" data-bs-parent="#implicit-evaluation">
                                         <div class="accordion-body">
                                             <p>
                                                 Instead of a fixed K-sized list, IDCG is based on the number of relevant items for each user.
-                                                This means the size of the list of relevant items for each user is at most K, but could be less if they have fewer relevant items.
-                                                Representing the number of relevant items as a list intuitively would call for a jagged array;
+                                                This means the the list of relevant items for each user has varying sizes.
+                                                The size is at most K, but could be less if they have fewer relevant items.
+                                                Representing the number of relevant items as a list intuitively would call for a jagged array (array values with different sizes);
                                                 however this is not supported in Numpy as of writing.
                                                 This leads us to padding the rest of the array as 0 to keep a uniform list size.
                                                 Zero is used as it doesn't interfere with the necessary calculation. 
                                             </p>
                                             <p>
-                                                <b>Result:</b> This accounts for the IDCG component to NDCG.
+                                                <b>Result:</b> Padded arrays create the range where we can reuse the Discounted Gain function to calculate for IDCG.
                                             </p>
                                         </div>
                                     </div>
                                 </div>
                             </p>
 
+                            <p class="mb-1 text-secondary"><b>Outcome:</b>
                             <p>
-                                This project resulted in modules that calculated the NDCG from recommendation systems,
-                                while avoiding the overhead of a C compiler. This is particularly useful for Python coders who are not familiar with C.
+                                This project resulted in modules that calculated the NDCG from recommendation systems that:
+                                <ul>
+                                    <li>is more easily generalisable by avoiding the overhead of a C compiler.</li>
+                                    <li>is particularly useful for Python coders who are not familiar with C.</li>
+                                    <li>can be more computationally efficient by avoiding Python loops.</li>
+                                </ul>
                             </p>
 
-                            <p class="mb-1 text-secondary"><b>Main Takeaways:</b>
+                            <p class="mb-1 text-secondary"><b>Skills applied:</b>
                                 <ul>
-                                    <li><b>Sparse Matrices:</b> Memory-efficient matrix representation of pairs as opposed to dense pivot tables.</li>
-                                    <li><b>Matrix comparison:</b> Manipulating components of a sparse matrix and performing operations between matrices to get the necessary unions and intersections of data.</li>
-                                    <li><b>Array operations on DataFrames:</b> An alternative to doing nested loops for tabular data.</li>
-                                    <li><b>Padded arrays:</b> Used to work around the lack of support for jagged arrays. Limited to use cases where padding doesn't interfere with calculations.</li>
+                                    <li><b>Translating Linear Algebra to code</b>
+                                    </li>
+                                    <li><b>Using Sparse Matrices:</b>
+                                        <ul>
+                                            <li>Enabled a more memory-efficient execution while using less computational resources.</li>
+                                            <li>Matrix operations (ex. element-wise math) allowed me to compare predictions with the validation set without loops.</li>
+                                        </ul>
+                                    </li>
+                                    <li><b>Array operations on DataFrames:</b> 
+                                        <ul>
+                                            <li>Provided an alternative to nested loops for tabular data.</li>
+                                            <li>Prevented the use of the .apply method.</li>
+                                        </ul>
+                                    </li>
+                                    <li><b>Using Padded Arrays:</b> 
+                                        <ul>
+                                            <li>Acted as a workaround the lack of support for jagged arrays.</li>
+                                            <li>May be limited to use cases where the padding value doesn't interfere with calculations.</li>
+                                        </ul>
+                                    </li>
                                 </ul>
                             </p>
                         </div>
