@@ -1,0 +1,20 @@
+- issuer: University of Canterbury
+  when: Dec 2023
+  text: Certificate of Excellence (Master of Applied Data Science)
+- issuer: DataCamp
+  when: Apr 2021
+  items:
+  - Introduction to Python
+  - Intermediate Python
+- issuer: Google Analytics Academy
+  items:
+  - Google Tag Manager Fundamentals (Mar 2021)
+  - Google Analytics for Beginners (Mar 2021)
+  - Advanced Google Analytics (Apr 2021)
+- issuer: The Trade Desk
+  items:
+  - Targeting and Data Management (Sep 2019)
+  - Programmatic Principles (Sep 2019)
+  - Optimization & Strategy (Sep 2019)
+  - Omnichannel & Inventory Types (Sep 2019)
+  - Connected TV Curriculum (Sep 2019)

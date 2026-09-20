@@ -1,0 +1,131 @@
+- role: Data Scientist
+  org: MediaWorks
+  period: June 2024 - Present
+  summary: As the sole Data Scientist, I elevated the digital radio data from its raw and nascent state to a mature and analytics-ready asset. I pioneered the end-to-end development of scalable data pipelines, implementing methodical transformations to deploy machine learning (ML) models and stakeholder reports. With the large volumes and varieties of data, I developed ML models such as user activity and churn modelling using Python and Snowflake to guide business strategy.
+  groups:
+  - label: Contributions as a data scientist
+    items:
+    - Pioneered and owned developing, deploying, and optimising big data pipelines for app and website data via Python and Snowflake. This results in a single source of truth for app and website data at a granular scale.
+    - Increased user data quality by 90% using imputation models with Snowflake SQL.
+    - 'Predicted the #1 song and artist on The Rock 2000 Countdown for 2024 using machine learning.'
+    - Fine-tuned a Retrieval-Augmented Generation chatbot model for financial reporting data.
+    - Developed and automated ETL apps that connect to APIs via Python and Snowflake.
+    - Developed bespoke engagement metrics to model listening behaviour more accurately compared to legacy methods.
+    - Guided business strategy by forecasting user activity and churn using machine learning, and presented insights using automated interactive Tableau dashboards.
+    - Modelled the database structure for scalable and compute-optimised reporting, visualisation, and machine learning.
+    - Advise on digital analytics and marketing operations such as information gathering and integrations.
+    - Spearheaded using GitHub and established guidelines within the Business Insights and Analytics team.
+- role: Intern Data Scientist
+  org: Ströer Labs NZ
+  period: November 2023 - February 2024
+  summary: Worked on the ad request optimisation project, which aimed to prevent unprofitable traffic from entering auctions, ultimately improving profit margins through cost savings.
+  groups:
+  - label: Contributions as a data scientist
+    items:
+    - Created a model that reduced unprofitable advertising traffic down to 50%, reduced opportunity costs by 20%, and increased profits compared to the past model.
+    - Experimented with various categorical encoding methods, machine learning techniques, and solution architectures in Python.
+    - Performed ETL on advertising traffic data through pySpark as preparation for modelling.
+    - Productionised the project by creating Python modules, test files to verify bespoke functions, a docker image to run the entire program, and an Airflow DAG file for scheduling.
+    - Ran the project on a cloud-based machine learning platform.
+- role: Part-Time Google Specialist and Digital Analyst
+  org: Orba Shoes
+  period: March 2023 - November 2023
+  summary: Manage the creation, optimisation, and reporting of Google assets.
+  groups:
+  - label: Contributions as an analyst
+    items:
+    - Developed a multi-channel strategy for the brand using localised market research data on key buyer personas.
+    - Audited and managed Google Assets, and optimised towards ad operations and SEO.
+    - Planned, implemented, analysed, and optimised Google Ad operations through historical data analysis and A/B testing.
+    - Migrated and managed Google Analytics properties to Google Analytics 4 by ensuring past data points and analyses were maintained.
+    - Used Python to periodically extract campaign data from Facebook Ads and the eCommerce platform onto cloud storage.
+    - Created a dashboard integrating 5 data sources.
+    - Optimised copy and targeting for Google Ads.
+- role: Part-Time Research Assistant
+  org: University of Canterbury - Arts Digital Lab
+  period: August 2023 - November 2023
+  summary: Programmatically gather, analyse, and visualise sentiment on the Taniwha using Natural Language Processing techniques.
+  groups:
+  - label: Contributions as a data scientist
+    items:
+    - Extracted text data from online sources using Python.
+    - Used NLP via Python to extract, transform, and prepare text data for analyses.
+    - Used machine learning to group documents and perform sentiment analysis.
+    - Research, collate, and analyse information, and summarise findings in a variety of formats.
+- role: Senior Performance Marketing Manager
+  org: David & Golyat Management, Inc.
+  period: September 2021 - January 2023
+  summary: Provided end-to-end marketing consultancy services ranging from market analyses and brand audits to campaign management and optimisation.
+  groups:
+  - label: Contributions as a marketer
+    items:
+    - Conduct media planning using quantitative market analysis tools and brand audits to cover all stages of the consumer journey.
+    - Manage and optimize Paid Search, Facebook, and Programmatic (Google) campaigns from end-to-end.
+    - Reduced App Install costs by 30% and increased Programmatic clickthrough by 4x.
+    - Implement improvements to planning, implementation, analyses, and optimization processes in the organization.
+  - label: Contributions an analyst
+    items:
+    - Reduced lead generation acquisition costs by 44% in 2 months through systematic audience segmentation, A/B Testing, and significance testing in RStudio.
+    - Increased eCommerce Return on Ad Spend by 4.5x on Facebook Ads through consumer segmentation and increased Programmatic clickthrough by 9x by optimizing customer touchpoints.
+    - Use Web Scraping to create sentiment analyses to provide insights to the creative direction.
+    - Use Google Analytics to create comprehensive analyses on consumer profiles, acquisition channels, and website behavior leading to efficient follow-through campaigns.
+    - Use Google Query Language to automate the weekly reporting process, reducing completion time by 60%.
+- role: Digital Project Manager
+  org: Viventis Search Asia
+  period: February 2020 - September 2021
+  summary: End-to-end management of recruitment marketing campaigns and change management towards the use of the Hubspot Suite for Marketing.
+  groups:
+  - label: Contributions a marketer
+    items:
+    - Gained up to 30x return on ad spend (ROAS) for Recruitment Marketing campaigns using Facebook Ads for a Financial Services account with highly specialized roles, and 76x ROAS for an account in the BPO industry.
+    - Handled end-to-end Facebook Ad and Google Ad B2B campaigns ⁠— covering setup, optimization, and reporting within a restricted set of KPIs and gained at least 70% sales accepted leads among signups.
+    - Created a business case, implementation plan, and digital marketing strategy for B2B operations, and got executive buy-in.
+    - Created a company-wide lead nurture strategy, lead qualification strategy, content plan, and reports dashboard aimed at accelerating pipeline conversions.
+    - Increased the ease of sales enablement through the creation of training plans, automation, and other digital assets.
+    - Produced creative assets for both Facebook Ads and Programmatic Ad B2B campaigns.
+  - label: Contributions an analyst
+    items:
+    - Increased ROAS using Google Tag Manager to set up custom events for remarketing and audience-building.
+    - Reduced 47% of manual B2B marketing operations in 3 months by spearheading the technical setup and integration of the CRM and marketing automation tool.
+    - Created an interactive dashboard using Google Data Studio to combine data from Facebook Ads, Google Analytics, and Google Sheets. Enabled auto-updating using Facebook Graph API and Google Query Language.
+    - Optimized data management using marketing automation workflows to determine contact properties for segmentation, qualification, and sales enablement.
+    - Optimized marketing operations management through KPI creation and reporting by establishing clear data points with the use of marketing automation.
+    - Visualized Google Search Console data through Google Data Studio to identify SEO gaps and content opportunities.
+- role: Senior Digital Marketing Specialist
+  org: SQREEM Technologies
+  period: March 2019 - January 2020
+  summary: Managed global campaigns from end-to-end and modelled the data structure for the proprietary Ad Serving tool.
+  groups:
+  - label: Contributions a marketer
+    items:
+    - Handled Facebook Ad and Programmatic Ad campaigns ⁠— covering setup, data-led optimization, and reporting within a restricted set of KPIs.
+    - Doubled a multinational pharmaceutical company's sales, increased website traffic, and increased event attendance. This campaign yielded contracts with the client's 80+ global branches.
+    - Reduced a major banking client's Cost per Acquisition by 90% compared to historical performance.
+    - Produced creative assets for both Facebook Ads and Programmatic Ad campaigns.
+  - label: Contributions an analyst
+    items:
+    - Reduced up to 60% of ad operations through automated ad setup by spearheading and modelling the development of the proprietary Ad Serving tool, which mapped data requirements and platform restrictions.
+    - Analyzed gaps in ad operations to be automated and created a business case to demonstrate the projected increase in efficiency.
+    - Worked with developers to create the minimum viable product, its expected functions and workflows.
+- role: Interim Creatives Director
+  org: SQREEM Technologies
+  period: February 2019 - December 2019
+  summary: Liased high level creative requirements to the team and contributed domain expertise for the proprietary Ad Creation tool.
+  groups:
+  - label: Contributions a subject matter expert
+    items:
+    - Liaised, evaluated, and managed creative requirements from the clients to the Digital Creatives Team to meet strict KPIs in the effort to optimize creative performance for the Digital Marketing Team.
+    - Crafted and implemented a training plan for the team.
+    - Troubleshot issues regarding interactive ad production.
+    - Spearheaded developments of the proprietary Digital Creatives tool in the effort to optimize the workflow for both the Digital Marketing Team and Digital Creatives Team.
+- role: Digital Marketing Specialist
+  org: SQREEM Technologies
+  period: July 2018 - March 2019
+  summary: Managed global campaigns from end-to-end and designed creative materials.
+  groups:
+  - label: Contributions a marketer
+    items:
+    - Handled Facebook Ad and Programmatic Ad campaigns ⁠— covering setup, data-led optimization, and reporting within a restricted set of KPIs.
+    - Produced creative assets for both Facebook Ads and Programmatic Ad campaigns.
+    - Produced creative studies, workflows, and developments to the company's proprietary creative tool.
+    - Acted as the main guide for Digital Marketing team on the effective use of the proprietary creative tool.
