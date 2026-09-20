@@ -1,6 +1,19 @@
+- role: Senior Data Analyst
+  org: NZME
+  period: May 2025 - Present
+  summary: As the Senior Data Analyst, I delivered key results by developing solutions through data and collaborating with various leaders across the business (OneRoof and NZ Herald). These solutions provided clarity and guided decision-making within the company.
+  groups:
+  - label: Contributions as an analyst
+    items:
+    - Deployed a subscription propensity model using Machine Learning (ML) in Python. This enabled the Subscriptions team to focus resources on users who are highly likely to subscribe.
+    - Developed and optimised data pipelines for OneRoof's app and website data using BigQuery SQL and Dataform. This allowed reports to scale and opened opportunities for behavioural analytics.
+    - Automated the report generation process for ad operations and digital performance using SQL, BigQuery ML, Python, and AI (Gemini). Every week, this delivers a PDF that contains a summary, relevant figures, and recommendations. 
+    - Improved users' app experience by developing a cross-platform readership analysis. This lifted the clickthrough on the app. 
+    - Designed the analytics tracking and automated testing framework for the NZ Herald App. This smooth tracking rebuild accounted for key data points involved in business metrics, reports, ML models, and digital operations.
+    - Presented projects and research findings to the wider team. 
 - role: Data Scientist
   org: MediaWorks
-  period: June 2024 - Present
+  period: June 2024 - Apr 2025
   summary: As the sole Data Scientist, I elevated the digital radio data from its raw and nascent state to a mature and analytics-ready asset. I pioneered the end-to-end development of scalable data pipelines, implementing methodical transformations to deploy machine learning (ML) models and stakeholder reports. With the large volumes and varieties of data, I developed ML models such as user activity and churn modelling using Python and Snowflake to guide business strategy.
   groups:
   - label: Contributions as a data scientist
