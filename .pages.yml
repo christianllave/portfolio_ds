@@ -1,0 +1,262 @@
+# Pages CMS configuration — https://pagescms.org/docs/configuration/
+
+media:
+  input: static/assets/img/uploads   
+  output: /assets/img/uploads        
+  rename: safe                       
+  categories: [image]
+
+content:
+
+  - name: about
+    label: Home page intro
+    type: file
+    path: content/_index.md
+    fields:
+      - name: title
+        type: string
+      - name: body
+        label: About text
+        type: rich-text
+
+  - name: projects
+    label: Projects
+    type: collection
+    path: content/projects
+    subfolders: true
+    filename: "{primary}.md"
+    view:
+      layout: tree
+      node:
+        filename: _index.md
+        hideDirs: others
+      fields: [title, weight]
+      primary: title
+    fields:
+      - name: title
+        type: string
+        required: true
+      - name: subheading
+        type: string
+        description: The short line shown under the title (displayed in capitals).
+      - name: summary
+        type: text
+        description: Optional. The blurb on cards and in search/social previews. Leave blank to use the first paragraph.
+      - name: weight
+        type: number
+        description: Order in lists. Lower numbers first. Leave blank to sort after numbered items.
+      - name: tags
+        type: string
+        list: true
+      - name: external_url
+        label: External link
+        type: string
+        description: Optional. Adds a button on the page (e.g. a GitHub repo).
+      - name: external_label
+        label: External link button text
+        type: string
+      - name: draft
+        type: boolean
+        description: Drafts are hidden from the live site.
+      - name: body
+        label: Body (Markdown)
+        type: code
+        options:
+          format: markdown
+
+  - name: engagements
+    label: Engagements
+    type: collection
+    path: content/engagements
+    subfolders: true
+    filename: "{primary}.md"
+    exclude: [_index.md]
+    view:
+      fields: [title, date]
+      primary: title
+      sort: [date, title]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        type: string
+        required: true
+      - name: subheading
+        type: string
+        description: e.g. the event or organiser.
+      - name: date
+        type: date
+        required: true
+      - name: tags
+        type: string
+        list: true
+      - name: external_url
+        label: External link
+        type: string
+      - name: external_label
+        label: External link button text
+        type: string
+      - name: draft
+        type: boolean
+      - name: body
+        type: rich-text
+
+  - name: notes
+    label: Notes
+    type: collection
+    path: content/notes
+    subfolders: true
+    filename: "{primary}.md"
+    exclude: [_index.md]
+    view:
+      fields: [title, date]
+      primary: title
+      sort: [date, title]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        type: string
+        required: true
+      - name: subheading
+        type: string
+      - name: summary
+        type: text
+        description: Optional. The blurb on cards. Leave blank to use the first paragraph.
+      - name: date
+        type: date
+        required: true
+      - name: tags
+        type: string
+        list: true
+      - name: draft
+        type: boolean
+      - name: body
+        type: rich-text
+
+  # --- Résumé data (rendered on the home page) --------------------------------
+  - name: resume
+    label: Résumé
+    type: group
+    items:
+      - name: profile
+        label: Name & links
+        type: file
+        path: data/profile.yaml
+        format: yaml
+        fields:
+          - name: name
+            type: string
+          - name: description
+            label: Site description (search & social previews)
+            type: text
+          - name: linkedin
+            type: string
+          - name: github
+            type: string
+
+      - name: experience
+        label: Experience
+        type: file
+        path: data/experience.yaml
+        format: yaml
+        list: true
+        fields:
+          - name: role
+            type: string
+          - name: org
+            label: Organisation
+            type: string
+          - name: period
+            type: string
+            description: Free text, e.g. "June 2024 - Present".
+          - name: summary
+            type: text
+          - name: groups
+            label: Contribution lists (the collapsible buttons)
+            type: object
+            list: true
+            fields:
+              - name: label
+                type: string
+              - name: items
+                label: Bullet points
+                type: string
+                list: true
+
+      - name: education
+        label: Education
+        type: file
+        path: data/education.yaml
+        format: yaml
+        list: true
+        fields:
+          - name: school
+            type: string
+          - name: degree
+            type: string
+          - name: period
+            type: string
+          - name: notes
+            type: string
+            list: true
+
+      - name: skills
+        label: Skills
+        type: file
+        path: data/skills.yaml
+        format: yaml
+        list: true
+        fields:
+          - name: group
+            type: string
+          - name: icons
+            label: Brand icons
+            type: string
+            list: true
+            description: Font Awesome brand icon names without the "fa-" prefix, e.g. python, r-project, docker, github, aws. Use this OR the text list below.
+          - name: items
+            label: Text list (shown with check marks)
+            type: string
+            list: true
+
+      - name: interests
+        label: Interests
+        type: file
+        path: data/interests.yaml
+        format: yaml
+        fields:
+          - name: intro
+            type: text
+          - name: items
+            type: object
+            list: true
+            fields:
+              - name: title
+                type: string
+              - name: text
+                type: text
+
+      - name: awards
+        label: Awards & certifications
+        type: file
+        path: data/awards.yaml
+        format: yaml
+        list: true
+        fields:
+          - name: issuer
+            type: string
+          - name: when
+            label: Date (optional)
+            type: string
+            description: Shown in brackets after the issuer, e.g. Dec 2023.
+          - name: text
+            label: Single award text (optional)
+            type: string
+            description: For one award. For several, use the list below instead.
+          - name: items
+            label: Awards (list)
+            type: string
+            list: true
