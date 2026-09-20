@@ -1,0 +1,8 @@
+{{- $terms := .GetTerms "tags" -}}
+{{- $date := and .IsPage (not .Date.IsZero) -}}
+{{- if or $date $terms }}
+<p class="meta">
+  {{ if $date }}<time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2006" }}</time>{{ end }}
+  {{ with $terms }}<span class="tags">{{ range . }}<a class="tag" href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>{{ end }}</span>{{ end }}
+</p>
+{{- end }}

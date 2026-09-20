@@ -1,0 +1,13 @@
+{{ define "main" }}
+            <section class="resume-section resume-section--top">
+                <div class="resume-section-content">
+                    {{ partial "crumbs.html" . }}
+                    <h1 class="page-title mb-5">Tags</h1>
+                    <p class="tags tags--large">
+                        {{ range .Data.Terms.Alphabetical }}
+                        <a class="tag" href="{{ .Page.RelPermalink }}">{{ .Page.LinkTitle }} <span class="count">{{ .Count }}</span></a>
+                        {{ end }}
+                    </p>
+                </div>
+            </section>
+{{ end }}

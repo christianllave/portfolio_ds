@@ -1,0 +1,15 @@
+{{ define "main" }}
+            <section class="resume-section resume-section--top">
+                <div class="resume-section-content">
+                    {{ partial "crumbs.html" . }}
+                    <h1 class="page-title mb-0">{{ .Title }}</h1>
+                    {{ with .Params.subheading }}<div class="subheading mb-4">{{ . }}</div>{{ end }}
+                    {{ with .Content }}<div class="entry-body mb-5">{{ . }}</div>{{ end }}
+                    {{ with .Pages }}
+                        {{ partial "entries.html" (dict "pages" . "depth" 0) }}
+                    {{ else }}
+                        <p class="text-secondary">Nothing published here yet.</p>
+                    {{ end }}
+                </div>
+            </section>
+{{ end }}

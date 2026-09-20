@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="{{ site.Language.Locale | default "en" }}">
+    <head>
+        {{ partial "head.html" . }}
+    </head>
+    <body id="page-top">
+        {{ partial "gtm-body.html" . }}
+
+        {{ partial "sidebar.html" . }}
+
+        <!-- Page Content-->
+        <div class="container-fluid p-0">
+            {{ block "main" . }}{{ end }}
+        </div>
+
+        <!-- Bootstrap core JS (self-hosted, v5.2.3)-->
+        <script src="{{ "js/bootstrap.bundle.min.js" | relURL }}"></script>
+        <!-- Core theme JS-->
+        <script src="{{ "js/scripts.js" | relURL }}"></script>
+    </body>
+</html>

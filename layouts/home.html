@@ -1,0 +1,164 @@
+{{ define "main" }}
+{{ $p := hugo.Data.profile }}
+{{ $parts := split $p.name " " }}
+{{ $last := index $parts (sub (len $parts) 1) }}
+{{ $first := delimit (first (sub (len $parts) 1) $parts) " " }}
+
+            <!-- About-->
+            <section class="resume-section" id="about">
+                <div class="resume-section-content">
+                    <h1 class="mb-0">
+                        {{ $first }}
+                        <span class="text-primary">{{ $last }}</span>
+                    </h1>
+                    {{ .Content | replaceRE "<p>" "<p class=\"lead mb-5\">" | safeHTML }}
+
+                    <div class="social-icons">
+                        {{ with $p.linkedin }}<a class="social-icon" href="{{ . }}" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>{{ end }}
+                        {{ with $p.github }}<a class="social-icon" href="{{ . }}" aria-label="GitHub"><i class="fab fa-github"></i></a>{{ end }}
+                    </div>
+                </div>
+            </section>
+            <hr class="m-0" />
+
+            {{ with site.GetPage "/projects" }}{{ with .Pages }}
+            <!-- Projects-->
+            <section class="resume-section" id="projects">
+                <div class="resume-section-content">
+                    <h2 class="mb-5">Projects</h2>
+                    {{ partial "entries.html" (dict "pages" . "depth" 0) }}
+                </div>
+            </section>
+            <hr class="m-0" />
+            {{ end }}{{ end }}
+
+            {{ with site.GetPage "/engagements" }}{{ with .Pages }}
+            <!-- Engagements-->
+            <section class="resume-section" id="engagements">
+                <div class="resume-section-content">
+                    <h2 class="mb-5">Engagements</h2>
+                    {{ partial "entries.html" (dict "pages" . "depth" 0) }}
+                </div>
+            </section>
+            <hr class="m-0" />
+            {{ end }}{{ end }}
+
+            {{ with site.GetPage "/notes" }}{{ with .Pages }}
+            <!-- Notes-->
+            <section class="resume-section" id="notes">
+                <div class="resume-section-content">
+                    <h2 class="mb-5">Notes</h2>
+                    {{ partial "entries.html" (dict "pages" . "depth" 0) }}
+                </div>
+            </section>
+            <hr class="m-0" />
+            {{ end }}{{ end }}
+
+            {{ with hugo.Data.experience }}
+            <!-- Experience-->
+            <section class="resume-section" id="experience">
+                <div class="resume-section-content">
+                    <h2 class="mb-5">Experience</h2>
+                    {{ range $i, $r := . }}
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-3">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">{{ $r.role }}</h3>
+                            <div class="subheading mb-3">{{ $r.org }}</div>
+                            {{ with $r.summary }}{{ $.RenderString (dict "display" "block") . }}{{ end }}
+                        </div>
+                        <div class="flex-shrink-0"><span class="text-primary">{{ $r.period }}</span></div>
+                    </div>
+                    {{ with $r.groups }}
+                    {{ $many := gt (len .) 1 }}
+                    <div class="accordion mb-5" id="experience{{ $i }}">
+                        {{ range $j, $g := . }}
+                        <button class="accordion-button collapsed{{ if $many }} mb-3{{ end }}" type="button" data-bs-toggle="collapse" data-bs-target="#exp{{ $i }}-{{ $j }}" aria-expanded="false" aria-controls="exp{{ $i }}-{{ $j }}">{{ $g.label }}</button>
+                        <div class="accordion-collapse collapse" id="exp{{ $i }}-{{ $j }}" data-bs-parent="#experience{{ $i }}">
+                            <div class="accordion-body">
+                                <ul>{{ range $g.items }}<li>{{ $.RenderString . }}</li>{{ end }}</ul>
+                            </div>
+                        </div>
+                        {{ end }}
+                    </div>
+                    {{ else }}
+                    <div class="mb-5"></div>
+                    {{ end }}
+                    {{ end }}
+                </div>
+            </section>
+            <hr class="m-0" />
+            {{ end }}
+
+            {{ with hugo.Data.education }}
+            <!-- Education-->
+            <section class="resume-section" id="education">
+                <div class="resume-section-content">
+                    <h2 class="mb-5">Education</h2>
+                    {{ $n := len . }}
+                    {{ range $i, $e := . }}
+                    <div class="d-flex flex-column flex-md-row justify-content-between{{ if lt (add $i 1) $n }} mb-5{{ end }}">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-0">{{ $e.school }}</h3>
+                            <div class="subheading mb-3">{{ $e.degree }}</div>
+                            {{ with $e.notes }}<ul>{{ range . }}<li>{{ . }}</li>{{ end }}</ul>{{ end }}
+                        </div>
+                        <div class="flex-shrink-0"><span class="text-primary">{{ $e.period }}</span></div>
+                    </div>
+                    {{ end }}
+                </div>
+            </section>
+            <hr class="m-0" />
+            {{ end }}
+
+            {{ with hugo.Data.skills }}
+            <!-- Skills-->
+            <section class="resume-section" id="skills">
+                <div class="resume-section-content">
+                    <h2 class="mb-5">Skills</h2>
+                    {{ range . }}
+                    <div class="subheading mb-3">{{ .group }}</div>
+                    {{ with .icons }}
+                    <ul class="list-inline dev-icons mb-5">
+                        {{ range . }}<li class="list-inline-item"><i class="fab fa-{{ . }}"></i></li>
+                        {{ end }}
+                    </ul>
+                    {{ end }}
+                    {{ with .items }}
+                    <ul class="fa-ul mb-5">{{ range . }}<li><span class="fa-li"><i class="fas fa-check"></i></span> {{ . }}</li>{{ end }}</ul>
+                    {{ end }}
+                    {{ end }}
+                </div>
+            </section>
+            <hr class="m-0" />
+            {{ end }}
+
+            {{ with hugo.Data.interests }}
+            <!-- Interests-->
+            <section class="resume-section" id="interests">
+                <div class="resume-section-content">
+                    <h2 class="mb-5">Interests</h2>
+                    {{ with .intro }}<p>{{ . }}</p>{{ end }}
+                    <ul>{{ range .items }}<li>{{ .title }}: {{ .text }}</li>{{ end }}</ul>
+                </div>
+            </section>
+            <hr class="m-0" />
+            {{ end }}
+
+            {{ with hugo.Data.awards }}
+            <!-- Awards-->
+            <section class="resume-section" id="awards">
+                <div class="resume-section-content">
+                    <h2 class="mb-5">Awards &amp; Certifications</h2>
+                    <ul class="fa-ul mb-0">
+                        {{ range . }}
+                        <li>
+                            <span class="fa-li"><i class="fas fa-trophy text-warning"></i></span>
+                            {{ .issuer }}{{ with .when }} ({{ . }}){{ end }}{{ if or .text .items }}:{{ end }}{{ with .text }} {{ . }}{{ end }}
+                            {{ with .items }}<ul>{{ range . }}<li>{{ . }}</li>{{ end }}</ul>{{ end }}
+                        </li>
+                        {{ end }}
+                    </ul>
+                </div>
+            </section>
+            {{ end }}
+{{ end }}

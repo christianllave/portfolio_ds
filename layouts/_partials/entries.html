@@ -1,0 +1,29 @@
+{{- /*
+  Renders pages using the theme's entry layout (title, subheading, summary,
+  date on the right). A "section" page (a folder with _index.md) shows its own
+  children underneath it, to any depth: that is how parent/child pages work.
+
+  Params: pages, depth (0), flat (bool: don't expand children)
+*/ -}}
+{{- $depth := .depth | default 0 -}}
+{{- $flat := .flat | default false -}}
+{{- range .pages }}
+<div class="d-flex flex-column flex-md-row justify-content-between {{ if eq $depth 0 }}mb-5{{ else }}mb-4{{ end }}">
+    <div class="flex-grow-1">
+        {{- if eq $depth 0 }}
+        <h3 class="mb-0"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+        {{- else }}
+        <h4 class="entry-child-title mb-0"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h4>
+        {{- end }}
+        {{ with .Params.subheading }}<div class="subheading mb-3">{{ . }}</div>{{ end }}
+        {{ with partial "summary.html" . }}<p>{{ . }}</p>{{ end }}
+        {{ partial "tags.html" . }}
+        {{- if and .IsSection (not $flat) }}{{ with .Pages }}
+        <div class="entry-children">
+            {{ partial "entries.html" (dict "pages" . "depth" (add $depth 1)) }}
+        </div>
+        {{- end }}{{ end }}
+    </div>
+    <div class="flex-shrink-0">{{ if and .IsPage (not .Date.IsZero) }}<span class="text-primary">{{ .Date.Format "2 January 2006" }}</span>{{ end }}</div>
+</div>
+{{- end }}
