@@ -3,14 +3,12 @@ title: User churn model
 subheading: Predicting inactivity using activity, and the lack thereof
 weight: 20
 tags:
-# skills
-- machine-learning
-# tools
-- python
-- lightgbm
-- optuna
+  - machine-learning
+  - python
+  - lightgbm
+  - optuna
+draft: false
 ---
-
 Digital media rely on user activity to determine marketable audiences. Being able to predict churning users allow for retention efforts to be put in place. In this project, I defined churn as a 30-day streak of a logged-out state, or 30-day streak of non-listenership.
 
 My main considerations were:
@@ -23,7 +21,7 @@ My main considerations were:
 
 The resulting model predicted around 70% of users correctly, with less than 10% being missed churners. Users are then assigned churn predictions based on the model, which informs the retention team for activation.
 
-#### Main Takeaways
+### Main Takeaways
 
 - Temporal considerations: splitting the dataset by time windows, engineering features based on time windows, representing inactivity (gaps vs numbers), representing change over time
 - Data science: decision-making and experimenting on different models, representations, and modelling components.
