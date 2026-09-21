@@ -1,20 +1,18 @@
 ---
-title: 'Google Analytics Raw Data: Wrangling'
-subheading: 'Zero to Hero: From raw data to business-ready assets.'
+title: "Google Analytics Raw Data: Wrangling"
+subheading: "Zero to Hero: From raw data to business-ready assets."
 weight: 30
 tags:
-# skill
-- data-modelling
-- analytics-engineering
-- etl
-# tools
-- snowflake
-- sql
+  - data-modelling
+  - analytics-engineering
+  - etl
+  - snowflake
+  - sql
+draft: false
 ---
-
 At the nascency of this digital radio product, I focused on establishing big data pipelines to meet business needs for reporting, visualisation, and machine learning applications. Google Analytics as a platform displays aggregated data; however, the business required analyses involving event-level data. This prompted the need for the Raw Data, which scales up in volume relative to the brand's user activity. With the requirements in mind, I ensured all my contributions were compute-optimised for the large-scale nature of the data. This foundational initiative resulted in high quality useable data for querying, integrating, and modelling.
 
-#### A number of core challenges arose from the nature of the data and the needs of the business
+## A number of core challenges arose from the nature of the data and the needs of the business
 
 > [!details]- The table requires flattening to get relevant fields.
 >
@@ -58,7 +56,7 @@ At the nascency of this digital radio product, I focused on establishing big dat
 >
 > For reporting, this solution attributes the correct performance metrics to the brands. For feature engineering, this assigns the correct degree and preference of listenership to the users.
 
-#### Main Takeaways
+## Main Takeaways
 
 - Flattening, transforming, and imputing large-scale tables without default join keys.
 - Partitioning, parallel processing, vectorisation, and caching helped with computational efficiency.
