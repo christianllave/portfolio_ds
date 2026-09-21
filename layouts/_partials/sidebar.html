@@ -1,0 +1,29 @@
+{{- $p := hugo.Data.profile -}}
+{{- $base := cond .IsHome "" site.Home.RelPermalink -}}
+{{- $items := slice (dict "id" "about" "label" "About") -}}
+{{- with site.GetPage "/projects" }}{{ if .Pages }}{{ $items = $items | append (dict "id" "projects" "label" "Projects") }}{{ end }}{{ end -}}
+{{- with site.GetPage "/engagements" }}{{ if .Pages }}{{ $items = $items | append (dict "id" "engagements" "label" "Engagements") }}{{ end }}{{ end -}}
+{{- with site.GetPage "/notes" }}{{ if .Pages }}{{ $items = $items | append (dict "id" "notes" "label" "Notes") }}{{ end }}{{ end -}}
+{{- if hugo.Data.experience }}{{ $items = $items | append (dict "id" "experience" "label" "Experience") }}{{ end -}}
+{{- if hugo.Data.education }}{{ $items = $items | append (dict "id" "education" "label" "Education") }}{{ end -}}
+{{- if hugo.Data.skills }}{{ $items = $items | append (dict "id" "skills" "label" "Skills") }}{{ end -}}
+{{- if hugo.Data.interests }}{{ $items = $items | append (dict "id" "interests" "label" "Interests") }}{{ end -}}
+{{- if hugo.Data.awards }}{{ $items = $items | append (dict "id" "awards" "label" "Awards") }}{{ end -}}
+{{- $section := .Section -}}
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top" id="sideNav">
+
+            <a class="navbar-brand js-scroll-trigger" href="{{ $base }}#page-top">
+                <span class="d-block d-lg-none">{{ $p.name }}</span>
+                <span class="d-none d-lg-block"><img class="img-fluid img-profile rounded-circle mx-auto mb-2" src="{{ "assets/img/profile.jpg" | relURL }}" alt="{{ $p.name }}" width="800" height="800" /></span>
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav">
+                    {{- range $items }}
+                    <li class="nav-item"><a class="nav-link js-scroll-trigger{{ if and $section (eq $section .id) }} active{{ end }}" href="{{ $base }}#{{ .id }}">{{ .label }}</a></li>
+                    {{- end }}
+                </ul>
+            </div>
+        </nav>

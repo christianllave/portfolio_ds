@@ -1,0 +1,27 @@
+baseURL       = "https://christianllave.github.io/portfolio_ds/"
+title         = "Christian Llave - Data Science Portfolio"
+locale        = "en-NZ"
+timeZone      = "Pacific/Auckland"
+enableRobotsTXT = true
+capitalizeListTitles = false
+
+[taxonomies]
+  tag = "tags"
+
+# A portfolio has no need for RSS feeds; keep the output lean.
+[outputs]
+  home     = ["html"]
+  section  = ["html"]
+  taxonomy = ["html"]
+  term     = ["html"]
+
+[markup]
+  [markup.goldmark.renderer]
+    unsafe = true
+  [markup.goldmark.extensions.typographer]
+    disable = true
+  [markup.highlight]
+    noClasses = false
+
+[params]
+  gtmID = "GTM-5FNQNR7X"

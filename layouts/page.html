@@ -1,0 +1,19 @@
+{{ define "main" }}
+            <section class="resume-section resume-section--top">
+                <div class="resume-section-content">
+                    {{ partial "crumbs.html" . }}
+                    <div class="d-flex flex-column flex-md-row justify-content-between mb-4">
+                        <div class="flex-grow-1">
+                            <h1 class="page-title mb-0">{{ .Title }}</h1>
+                            {{ with .Params.subheading }}<div class="subheading mb-3">{{ . }}</div>{{ end }}
+                            {{ partial "tags.html" . }}
+                            {{ with .Params.external_url }}
+                            <p class="mt-3 mb-0"><a class="entry-cta" href="{{ . }}" rel="noopener">{{ $.Params.external_label | default "Read more" }}</a></p>
+                            {{ end }}
+                        </div>
+                        <div class="flex-shrink-0">{{ if not .Date.IsZero }}<span class="text-primary">{{ .Date.Format "2 January 2006" }}</span>{{ end }}</div>
+                    </div>
+                    <div class="entry-body">{{ .Content }}</div>
+                </div>
+            </section>
+{{ end }}

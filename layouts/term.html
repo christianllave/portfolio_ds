@@ -1,0 +1,9 @@
+{{ define "main" }}
+            <section class="resume-section resume-section--top">
+                <div class="resume-section-content">
+                    {{ partial "crumbs.html" . }}
+                    <h1 class="page-title mb-5">Tagged <span class="text-primary">{{ .Title }}</span></h1>
+                    {{ partial "entries.html" (dict "pages" .Pages "depth" 0 "flat" true) }}
+                </div>
+            </section>
+{{ end }}

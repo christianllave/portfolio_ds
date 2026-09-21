@@ -1,0 +1,24 @@
+{{- /* Short blurb for lists and meta descriptions. Uses the page's `summary`
+       front matter if set; otherwise the FIRST PARAGRAPH of the body, cut back
+       to the last complete sentence if it is long. An ellipsis is only added
+       when text was actually cut mid-sentence. */ -}}
+{{- $s := "" -}}
+{{- with .Params.summary }}
+  {{- $s = . -}}
+{{- else }}
+  {{- $first := "" -}}
+  {{- with findRE `(?s)<p[ >].*?</p>` .Content 1 }}{{ $first = index . 0 }}{{ end -}}
+  {{- $t := $first | plainify | htmlUnescape | string | strings.TrimSpace -}}
+  {{- if le (len $t) 280 }}
+    {{- $s = $t -}}
+  {{- else }}
+    {{- $cut := substr $t 0 280 -}}
+    {{- $m := findRE `(?s)^.*[.!?](\s|$)` $cut 1 -}}
+    {{- if and $m (gt (len (index $m 0)) 80) }}
+      {{- $s = index $m 0 | strings.TrimSpace -}}
+    {{- else }}
+      {{- $s = printf "%s…" (replaceRE `\s+\S*$` "" $cut) -}}
+    {{- end }}
+  {{- end }}
+{{- end -}}
+{{- return $s -}}

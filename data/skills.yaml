@@ -1,0 +1,24 @@
+- group: Programming Languages & Tools
+  icons:
+  - python
+  - r-project
+  - docker
+  - github
+  - aws
+  - shopify
+- group: Other Programming Tools
+  items:
+  - Snowflake + SnowPark
+  - SQL / SQLITE
+  - Apache Airflow
+  - Google Cloud Platform APIs
+  - Meta APIs
+- group: Commercial Competencies
+  items:
+  - Project Management
+  - Data Management and Database Design
+  - Digital Advertising and Marketing Consulting
+  - Market Research
+  - Campaign Management
+  - Digital Analyses
+  - Brand Audits

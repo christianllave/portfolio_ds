@@ -1,0 +1,28 @@
+{{- /*
+  Renders pages as a nested list. A "section" page (a folder with _index.md)
+  shows its own children underneath it, to any depth. That is what makes
+  parent/child pages work with no extra configuration.
+
+  Params: pages, depth (0), top (heading level for depth 0: 2 or 3), flat (bool)
+*/ -}}
+{{- $depth := .depth | default 0 -}}
+{{- $top := .top | default 3 -}}
+{{- $flat := .flat | default false -}}
+<ul class="entries{{ if gt $depth 0 }} entries--nested{{ end }}">
+  {{- range .pages }}
+  <li class="entry">
+    {{- if and (eq $depth 0) (eq $top 2) }}
+    <h2 class="entry-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+    {{- else if eq $depth 0 }}
+    <h3 class="entry-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></h3>
+    {{- else }}
+    <p class="entry-title"><a href="{{ .RelPermalink }}">{{ .Title }}</a></p>
+    {{- end }}
+    {{ with partial "summary.html" . }}<p class="entry-summary">{{ . }}</p>{{ end }}
+    {{ partial "meta.html" . }}
+    {{- if and .IsSection (not $flat) }}{{ with .Pages }}
+    {{ partial "tree.html" (dict "pages" . "depth" (add $depth 1) "top" $top) }}
+    {{- end }}{{ end }}
+  </li>
+  {{- end }}
+</ul>

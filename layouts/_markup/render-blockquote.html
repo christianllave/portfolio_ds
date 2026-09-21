@@ -1,0 +1,27 @@
+{{- /*
+  Collapsible sections, written in plain Markdown:
+
+      > [!details]- Title of the section        (collapsed by default)
+      >
+      > Body text, lists, links … as normal Markdown.
+
+  Use "+" instead of "-" to start expanded. Rendered with the theme's
+  Bootstrap accordion markup. A blockquote that doesn't use [!details] is left
+  as an ordinary quote. (Falls back gracefully on GitHub too.)
+*/ -}}
+{{- if and (eq .Type "alert") (eq .AlertType "details") -}}
+{{- $id := printf "collapse-%d" .Ordinal -}}
+{{- $open := eq .AlertSign "+" -}}
+<div class="accordion">
+    <button class="accordion-button{{ if not $open }} collapsed{{ end }} mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#{{ $id }}" aria-expanded="{{ $open }}" aria-controls="{{ $id }}">{{ .AlertTitle | safeHTML }}</button>
+    <div id="{{ $id }}" class="accordion-collapse collapse{{ if $open }} show{{ end }}">
+        <div class="accordion-body">
+{{ .Text }}
+        </div>
+    </div>
+</div>
+{{- else -}}
+<blockquote class="blockquote">
+{{ .Text }}
+</blockquote>
+{{- end -}}

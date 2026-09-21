@@ -1,0 +1,56 @@
+/* Additions to the Start Bootstrap "Resume" theme.
+   Kept separate from styles.css so that file stays identical to the original
+   site's stylesheet. Uses the theme's own colour variables throughout. */
+
+/* Inner pages (project, section, tag pages) start at the top of the viewport
+   instead of being vertically centred like the one-page sections. */
+.resume-section.resume-section--top { align-items: flex-start; }
+
+/* Page titles: the theme's h1/h2 sizes are for one-word section headings;
+   long project titles need something a little smaller. */
+.page-title { font-size: clamp(2rem, 3.2vw + 0.5rem, 3.25rem); }
+
+/* Outbound-link button (e.g. "View on GitHub"), in the theme's own colours.
+   (The stock .btn-primary still carries the original template's orange.) */
+.entry-cta {
+  display: inline-block; padding: 0.55rem 1.4rem; border-radius: 999px;
+  background: var(--bs-primary); color: #fff; font-weight: 800;
+  letter-spacing: 0.03em; text-decoration: none;
+}
+.entry-cta:hover, .entry-cta:focus-visible { background: var(--bs-secondary); color: #fff; }
+
+/* Breadcrumbs */
+.breadcrumb { font-size: 0.95rem; margin-bottom: 2rem; }
+.breadcrumb-item + .breadcrumb-item::before { color: var(--bs-secondary); }
+
+/* Nested (child) entries: a teal rule marks the hierarchy. */
+.entry-children { margin-top: 1.75rem; padding-left: 1.5rem; border-left: 4px solid var(--bs-secondary); }
+.entry-children .subheading { font-size: 1.25rem; }
+.entry-child-title { font-size: 1.5rem; }
+
+/* Tags */
+.tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.tag {
+  display: inline-block; padding: 0.1rem 0.6rem; font-size: 0.8rem; font-weight: 800;
+  letter-spacing: 0.03em; text-decoration: none; color: var(--bs-secondary);
+  border: 1px solid var(--bs-secondary); border-radius: 999px;
+}
+.tag:hover { background: var(--bs-secondary); color: #fff; }
+.tags--large .tag { font-size: 1rem; padding: 0.25rem 0.9rem; }
+.tag .count { opacity: 0.7; font-weight: 400; margin-left: 0.2rem; }
+
+/* Long-form page content */
+.entry-body h4 {
+  text-transform: none; font-size: 1rem; font-weight: 800;
+  color: var(--bs-secondary); margin: 1.75rem 0 0.35rem;
+}
+.entry-body > :first-child { margin-top: 0; }
+.entry-body img { margin: 1.25rem 0; }
+.entry-body .accordion + :not(.accordion) { margin-top: 2rem; }
+.entry-body .accordion-body > :last-child { margin-bottom: 0; }
+.entry-body pre {
+  overflow-x: auto; padding: 1rem; border: 1px solid var(--bs-border-color);
+  border-radius: 0.5rem; font-size: 0.9rem;
+}
+.entry-body table { display: block; overflow-x: auto; }
+.entry-body blockquote { border-left: 4px solid var(--bs-border-color); padding-left: 1rem; color: var(--bs-secondary); }

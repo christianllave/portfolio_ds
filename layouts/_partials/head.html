@@ -1,0 +1,34 @@
+{{- $p := hugo.Data.profile -}}
+{{- $desc := "" -}}
+{{- if .IsHome }}{{ $desc = $p.description }}{{ else }}{{ $desc = partial "summary.html" . }}{{ end -}}
+{{- $title := site.Title -}}
+{{- if not .IsHome }}{{ $title = printf "%s | %s" .Title $p.name }}{{ end -}}
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+{{ with $desc }}<meta name="description" content="{{ . }}" />{{ end }}
+
+<!--Social Sharing-->
+<meta property="og:title" content="{{ $title }}" />
+<meta property="og:image" content="{{ "assets/img/social_sharing.png" | absURL }}" />
+{{ with $desc }}<meta property="og:description" content="{{ . }}" />{{ end }}
+<meta property="og:type" content="{{ if .IsPage }}article{{ else }}website{{ end }}" />
+<meta property="og:url" content="{{ .Permalink }}" />
+
+<meta name="author" content="{{ $p.name }}" />
+
+<title>{{ $title }}</title>
+<link rel="canonical" href="{{ .Permalink }}" />
+{{ with site.Params.gtmID }}{{ if hugo.IsProduction }}
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','{{ . }}');</script>
+<!-- End Google Tag Manager -->
+{{ end }}{{ end }}
+<link rel="icon" type="image/x-icon" href="{{ "assets/img/favicon.ico" | relURL }}" />
+<!-- Font Awesome icons (free version)-->
+<script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+<!-- Google fonts-->
+<link href="https://fonts.googleapis.com/css?family=Saira+Extra+Condensed:500,700" rel="stylesheet" type="text/css" />
+<link href="https://fonts.googleapis.com/css?family=Muli:400,400i,800,800i" rel="stylesheet" type="text/css" />
+<!-- Core theme CSS (Start Bootstrap Resume, includes Bootstrap) + site additions + code highlighting-->
+{{ $css := slice (resources.Get "css/styles.css") (resources.Get "css/extras.css") (resources.Get "css/syntax.css") | resources.Concat "css/site.css" | resources.Minify | resources.Fingerprint -}}
+<link href="{{ $css.RelPermalink }}" rel="stylesheet" integrity="{{ $css.Data.Integrity }}" />
