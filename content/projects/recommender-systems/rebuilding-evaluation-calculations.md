@@ -5,6 +5,7 @@ weight: 10
 tags:
   - recommender-systems
   - machine-learning
+  - linear-algebra
   - python
   - pandas
   - numpy
