@@ -2,26 +2,24 @@
 title: Rebuilding evaluation calculations for recommendation systems
 subheading: A lot of models work. Evaluation metrics tell us which ones work well.
 weight: 10
+tags:
+  - recommender-systems
+  - machine-learning
+  - python
+  - pandas
+  - numpy
+  - scipy
 external_url: https://github.com/christianllave/mind-reco-public/blob/main/html/evaluate-annotated-v2.md
 external_label: Read the annotated code
-tags:
-# skills
-- recommender-systems
-- machine-learning
-# tools
-- python
-- pandas
-- numpy
-- scipy
+draft: false
 ---
-
 Evaluation metrics describe how well a model predicts on unseen data, and are used in fine-tuning. In the Python package "implicit", the evaluation module returned errors for common metrics, such as Normalised Discounted Cumulative Gain (NDCG). After some research, the [accepted solution](https://github.com/benfred/implicit/issues/726#issuecomment-2632016615) was to perform the evaluation manually.
 
-#### Goal
+### Goal
 
 Create my own version of the evaluation module.
 
-#### Considerations for the approach
+### Considerations for the approach
 
 > [!details]- Starting Metric
 >
@@ -73,7 +71,7 @@ Create my own version of the evaluation module.
 >
 > **Result:** Padded arrays create the range where we can reuse the Discounted Gain function to calculate for IDCG.
 
-#### Outcome
+### Outcome
 
 This project resulted in modules that calculated the NDCG from recommendation systems that:
 
@@ -81,7 +79,7 @@ This project resulted in modules that calculated the NDCG from recommendation sy
 - is particularly useful for Python coders who are not familiar with C.
 - can be more computationally efficient by avoiding Python loops.
 
-#### Skills applied
+### Skills applied
 
 - **Translating Linear Algebra to code**
 - **Using Sparse Matrices:**
